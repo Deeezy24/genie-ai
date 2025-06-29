@@ -14,4 +14,4 @@ const LoginSchema = z.object({
 class RegisterDto extends createZodDto(RegisterSchema) {}
 class LoginDto extends createZodDto(LoginSchema) {}
 
-export { RegisterDto, LoginDto };
+export { LoginDto, RegisterDto };
