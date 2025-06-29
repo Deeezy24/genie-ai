@@ -15,6 +15,9 @@
     "*.{js,jsx,ts,tsx}": "pnpm lint:fix",
     "**/package.json": "sort-package-json"
   },
+  "dependencies": {
+    "@nestjs/mapped-types": "*"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
     "@workspace/typescript-config": "workspace:*",
