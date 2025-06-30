@@ -1,9 +1,17 @@
+// .vscode/settings.json  (workspace-level)
 {
-    "tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "biomejs.biome",
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.organizeImports": "explicit"
-    }
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+
+  // Make Biome the formatter for the languages you use
+  "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[javascriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.organizeImports": "explicit"
+  }
 }

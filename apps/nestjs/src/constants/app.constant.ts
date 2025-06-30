@@ -1,29 +1,29 @@
 export enum Environment {
-    Local = "local",
-    Development = "development",
-    Staging = "staging",
-    Production = "production",
-    Test = "test",
+  Local = "local",
+  Development = "development",
+  Staging = "staging",
+  Production = "production",
+  Test = "test",
 }
 
 export enum LogService {
-    Console = "console",
-    GoogleLogging = "google-logging",
-    AwsCloudWatch = "aws-cloudwatch",
+  Console = "console",
+  GoogleLogging = "google-logging",
+  AwsCloudWatch = "aws-cloudwatch",
 }
 
 export enum Order {
-    Asc = "asc",
-    Desc = "desc",
+  Asc = "asc",
+  Desc = "desc",
 }
 
 export const loggingRedactPaths = [
-    "req.headers.authorization",
-    "req.body.token",
-    "req.body.refreshToken",
-    "req.body.email",
-    "req.body.password",
-    "req.body.oldPassword",
+  "req.headers.authorization",
+  "req.body.token",
+  "req.body.refreshToken",
+  "req.body.email",
+  "req.body.password",
+  "req.body.oldPassword",
 ];
 
 export const IS_PUBLIC = "is-public";

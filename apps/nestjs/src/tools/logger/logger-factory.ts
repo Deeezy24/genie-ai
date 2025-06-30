@@ -8,110 +8,109 @@ import { LogService, loggingRedactPaths } from "../../constants/app.constant";
 
 // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#logseverity
 const PinoLevelToGoogleLoggingSeverityLookup = Object.freeze({
-    trace: "DEBUG",
-    debug: "DEBUG",
-    info: "INFO",
-    warn: "WARNING",
-    error: "ERROR",
-    fatal: "CRITICAL",
+  trace: "DEBUG",
+  debug: "DEBUG",
+  info: "INFO",
+  warn: "WARNING",
+  error: "ERROR",
+  fatal: "CRITICAL",
 });
 
 const genReqId: GenReqId = (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => {
-    const id: ReqId = req.headers["x-request-id"] || uuidv4();
-    res.setHeader("X-Request-Id", id.toString());
-    return id;
+  const id: ReqId = req.headers["x-request-id"] || uuidv4();
+  res.setHeader("X-Request-Id", id.toString());
+  return id;
 };
 
 const customSuccessMessage = (req: IncomingMessage, res: ServerResponse<IncomingMessage>, responseTime: number) => {
-    return `[${req.id || "*"}] "${req.method} ${req.url}" ${res.statusCode} - "${req.headers["host"]}" "${req.headers["user-agent"]}" - ${responseTime} ms`;
+  return `[${req.id || "*"}] "${req.method} ${req.url}" ${res.statusCode} - "${req.headers["host"]}" "${req.headers["user-agent"]}" - ${responseTime} ms`;
 };
 
 const customReceivedMessage = (req: IncomingMessage) => {
-    return `[${req.id || "*"}] "${req.method} ${req.url}"`;
+  return `[${req.id || "*"}] "${req.method} ${req.url}"`;
 };
 
 const customErrorMessage = (req: IncomingMessage, res: ServerResponse<IncomingMessage>, err: Error) => {
-    return `[${req.id || "*"}] "${req.method} ${req.url}" ${res.statusCode} - "${req.headers["host"]}" "${req.headers["user-agent"]}" - message: ${err.message}`;
+  return `[${req.id || "*"}] "${req.method} ${req.url}" ${res.statusCode} - "${req.headers["host"]}" "${req.headers["user-agent"]}" - message: ${err.message}`;
 };
 
 function logServiceConfig(logService: string): Options {
-    switch (logService) {
-        case LogService.GoogleLogging:
-            return googleLoggingConfig();
-        case LogService.AwsCloudWatch:
-            return cloudwatchLoggingConfig();
-        case LogService.Console:
-        default:
-            return consoleLoggingConfig();
-    }
+  switch (logService) {
+    case LogService.GoogleLogging:
+      return googleLoggingConfig();
+    case LogService.AwsCloudWatch:
+      return cloudwatchLoggingConfig();
+    case LogService.Console:
+    default:
+      return consoleLoggingConfig();
+  }
 }
 
 function cloudwatchLoggingConfig(): Options {
-    // FIXME: Implement AWS CloudWatch logging configuration
-    return {
-        messageKey: "message",
-    };
+  // FIXME: Implement AWS CloudWatch logging configuration
+  return {
+    messageKey: "message",
+  };
 }
 
 function googleLoggingConfig(): Options {
-    return {
-        messageKey: "message",
-        formatters: {
-            level(label, number) {
-                return {
-                    severity:
-                        PinoLevelToGoogleLoggingSeverityLookup[
-                            label as keyof typeof PinoLevelToGoogleLoggingSeverityLookup
-                        ] || PinoLevelToGoogleLoggingSeverityLookup["info"],
-                    level: number,
-                };
-            },
-        },
-    };
+  return {
+    messageKey: "message",
+    formatters: {
+      level(label, number) {
+        return {
+          severity:
+            PinoLevelToGoogleLoggingSeverityLookup[label as keyof typeof PinoLevelToGoogleLoggingSeverityLookup] ||
+            PinoLevelToGoogleLoggingSeverityLookup["info"],
+          level: number,
+        };
+      },
+    },
+  };
 }
 
 export function consoleLoggingConfig(): Options {
-    return {
-        messageKey: "msg",
-        transport: {
-            target: "pino-pretty",
-            options: {
-                singleLine: true,
-                ignore: "req.id,req.headers,req.remoteAddress,req.remotePort,res.headers",
-            },
-        },
-    };
+  return {
+    messageKey: "msg",
+    transport: {
+      target: "pino-pretty",
+      options: {
+        singleLine: true,
+        ignore: "req.id,req.headers,req.remoteAddress,req.remotePort,res.headers",
+      },
+    },
+  };
 }
 
 async function useLoggerFactory(configService: ConfigService<GlobalConfig>): Promise<Params> {
-    const logLevel = configService.get("app.logLevel", { infer: true });
-    const logService = configService.get("app.logService", { infer: true });
-    const isDebug = configService.get("app.debug", { infer: true });
+  const logLevel = configService.get("app.logLevel", { infer: true });
+  const logService = configService.get("app.logService", { infer: true });
+  const isDebug = configService.get("app.debug", { infer: true });
 
-    const pinoHttpOptions: Options = {
-        level: logLevel,
-        genReqId: isDebug ? genReqId : undefined,
-        serializers: isDebug
-            ? {
-                  req: (req) => {
-                      req.body = req.raw.body;
-                      return req;
-                  },
-              }
-            : undefined,
-        customSuccessMessage,
-        customReceivedMessage,
-        customErrorMessage,
-        redact: {
-            paths: loggingRedactPaths,
-            censor: "**GDPR COMPLIANT**",
-        }, // Redact sensitive information
-        ...logServiceConfig(logService as string),
-    };
+  const pinoHttpOptions: Options = {
+    level: logLevel,
+    genReqId: isDebug ? genReqId : undefined,
+    serializers: isDebug
+      ? {
+          req: (req) => {
+            req.body = req.raw.body;
+            return req;
+          },
+        }
+      : undefined,
+    customSuccessMessage,
+    customReceivedMessage,
+    customErrorMessage,
+    redact: {
+      paths: loggingRedactPaths,
+      censor: "**GDPR COMPLIANT**",
+    }, // Redact sensitive information
+    ...logServiceConfig(logService as string),
+  };
 
-    return {
-        pinoHttp: pinoHttpOptions,
-    };
+  return {
+    pinoHttp: pinoHttpOptions,
+  };
 }
 
 export default useLoggerFactory;

@@ -5,8 +5,8 @@ import { ClerkClientProvider } from "../../../providers/clerk/clerk-client.servi
 import { ClerkStrategy } from "./clerk.strategy";
 
 @Module({
-    imports: [PassportModule, ConfigModule],
-    providers: [ClerkStrategy, ClerkClientProvider],
-    exports: [PassportModule],
+  imports: [PassportModule, ConfigModule],
+  providers: [ClerkStrategy, ClerkClientProvider],
+  exports: [PassportModule],
 })
 export class AuthModule {}

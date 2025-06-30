@@ -11,6 +11,9 @@ catalog:
   '@types/node': 20.3.1
   lucide-react: 0.517.0
 
+ignoredBuiltDependencies:
+  - '@clerk/shared'
+
 onlyBuiltDependencies:
   - '@nestjs/core'
   - core-js-pure
