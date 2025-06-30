@@ -20,9 +20,7 @@ const Signin = () => {
   });
 
   const signInWithEmail = async (data: SignInSchema) => {
-    if (!isLoaded) {
-      return;
-    }
+    if (!isLoaded) return;
 
     try {
       const result = await signIn.create({
@@ -39,7 +37,23 @@ const Signin = () => {
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error(error.message);
+      } else {
+        toast.error("Failed to sign in");
+      }
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    if (!isLoaded) return;
+
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_google",
+        redirectUrl: "/sign-in",
+        redirectUrlComplete: "/dasboard",
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       } else {
         toast.error("Failed to sign in");
       }
@@ -48,7 +62,7 @@ const Signin = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-900">
-      <SigninForm signInWithEmail={signInWithEmail} form={form} />
+      <SigninForm signInThruGoogle={handleGoogleSignUp} signInWithEmail={signInWithEmail} form={form} />
     </div>
   );
 };

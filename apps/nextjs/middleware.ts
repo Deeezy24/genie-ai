@@ -1,8 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+import { IS_ONBOARDING_ROUTE, IS_PUBLIC_ROUTE } from "./lib/constant";
 
-const isOnboardingRoute = createRouteMatcher(["/onboarding"]);
-const isPublicRoute = createRouteMatcher(["/public-route-example"]);
+const isOnboardingRoute = createRouteMatcher(IS_ONBOARDING_ROUTE);
+const isPublicRoute = createRouteMatcher(IS_PUBLIC_ROUTE);
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
   const { userId, sessionClaims, redirectToSignIn } = await auth();

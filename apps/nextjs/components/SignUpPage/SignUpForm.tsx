@@ -3,31 +3,90 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@work
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@workspace/ui/components/form";
 import { Input } from "@workspace/ui/components/input";
 import { Separator } from "@workspace/ui/components/separator";
-import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { FieldValues } from "react-hook-form";
-import { SignInFormProps } from "@/lib/types";
+import { FieldValues, UseFormReturn } from "react-hook-form";
+import { SignUpSchema } from "@/lib/schema";
 
-const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps) => {
+type SignUpFormProps = {
+  signUpWithEmail: (data: SignUpSchema) => void;
+  signUpThruGoogle: () => void;
+  form: UseFormReturn<SignUpSchema>;
+};
+
+const SignupForm = ({ signUpWithEmail, form, signUpThruGoogle }: SignUpFormProps) => {
   const { control, handleSubmit } = form;
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <div className="w-full max-w-md">
       <Card className="shadow-2xl bg-white/80 backdrop-blur-sm dark:bg-neutral-900/80 border-2">
         <CardHeader className="space-y-4">
           <div className="text-center space-y-2">
-            <CardTitle className="text-2xl font-semibold bg-gradient-to-r from-neutral-900 to-neutral-700 dark:from-neutral-100 dark:to-neutral-300 bg-clip-text text-transparent">
-              Welcome back
+            <CardTitle className="text-2xl font-semibold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
+              Create your account
             </CardTitle>
-            <CardDescription className=" dark:text-slate-400">Sign in to your account to continue</CardDescription>
+            <CardDescription className="text-slate-600 dark:text-slate-400">
+              Join us today and get started
+            </CardDescription>
           </div>
         </CardHeader>
 
         <CardContent className="space-y-6">
           <Form {...form}>
-            <form onSubmit={handleSubmit(signInWithEmail)} className="space-y-4">
+            <form onSubmit={handleSubmit(signUpWithEmail)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={control}
+                  name="firstName"
+                  render={({ field }: { field: FieldValues }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        First Name
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                          <Input
+                            {...field}
+                            type="text"
+                            placeholder="John"
+                            className="pl-10 h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={control}
+                  name="lastName"
+                  render={({ field }: { field: FieldValues }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Last Name
+                      </FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                          <Input
+                            {...field}
+                            type="text"
+                            placeholder="Doe"
+                            className="pl-10 h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={control}
                 name="email"
@@ -62,7 +121,7 @@ const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps
                         <Input
                           {...field}
                           type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
+                          placeholder="Create a password"
                           className="pl-10 pr-10 h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
                         />
                         <button
@@ -79,19 +138,46 @@ const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps
                 )}
               />
 
-              <div className="flex items-center justify-center text-sm">
-                <Link href="/forgot-password">Forgot password?</Link>
-              </div>
-
+              <FormField
+                control={control}
+                name="confirmPassword"
+                render={({ field }: { field: FieldValues }) => (
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      Confirm Password
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
+                        <Input
+                          {...field}
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="Confirm your password"
+                          className="pl-10 pr-10 h-11 border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
+
               <Button type="submit" disabled={form.formState.isSubmitting} className="w-full ">
                 {form.formState.isSubmitting ? (
                   <div className="flex items-center justify-center space-x-2">
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Signing In...
+                    Creating Account...
                   </div>
                 ) : (
-                  "Sign In"
+                  "Create Account"
                 )}
               </Button>
             </form>
@@ -100,11 +186,11 @@ const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps
           <div className="relative">
             <Separator className="my-6" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-sm">or continue with</span>
+              <span>or continue with</span>
             </div>
           </div>
 
-          <Button onClick={signInThruGoogle} variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={signUpThruGoogle}>
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="currentColor"
@@ -127,13 +213,13 @@ const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps
           </Button>
 
           <div className="text-center pt-4">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              Don't have an account?{" "}
+            <p className="text-sm dark:text-slate-400">
+              Already have an account?{" "}
               <Link
-                href="/sign-up"
+                href="/sign-in"
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
               >
-                Sign up
+                Sign in
               </Link>
             </p>
           </div>
@@ -143,4 +229,4 @@ const SigninForm = ({ signInWithEmail, form, signInThruGoogle }: SignInFormProps
   );
 };
 
-export default SigninForm;
+export default SignupForm;
