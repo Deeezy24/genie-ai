@@ -9,7 +9,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "lint:fix": "biome check --write",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prisma:generate": "pnpm dlx prisma generate --schema ./prisma"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "pnpm lint:fix",
