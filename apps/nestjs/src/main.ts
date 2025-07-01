@@ -68,6 +68,6 @@ async function bootstrap() {
   SwaggerModule.setup("api/docs", app, documentFactory);
 
   app.setGlobalPrefix("api/v1");
-  await app.listen(appConfig.port ?? 8080);
+  await app.listen(appConfig.port ?? 8080, "0.0.0.0");
 }
 bootstrap();
