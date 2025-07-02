@@ -9,7 +9,7 @@ export class WebhookService {
   async createUserWebhook(userCreatedWebhook: UserCreatedWebhook) {
     const user = await this.prisma.user_table.create({
       data: {
-        user_clerk_id: userCreatedWebhook.data.id,
+        user_id: userCreatedWebhook.data.id,
         email: userCreatedWebhook.data.email_addresses[0]?.email_address ?? "",
         first_name: userCreatedWebhook.data.first_name ?? "",
         last_name: userCreatedWebhook.data.last_name ?? "",

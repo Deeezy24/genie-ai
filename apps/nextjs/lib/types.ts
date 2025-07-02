@@ -6,3 +6,10 @@ export type SignInFormProps = {
   signInThruGoogle: () => void;
   form: UseFormReturn<SignInSchema>;
 };
+
+export type NormalisedAxiosError = {
+  status?: number;
+  message: string;
+  data?: unknown;
+  raw: unknown;
+};

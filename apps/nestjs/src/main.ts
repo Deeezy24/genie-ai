@@ -1,10 +1,4 @@
-import {
-  HttpStatus,
-  UnprocessableEntityException,
-  ValidationError,
-  ValidationPipe,
-  VersioningType,
-} from "@nestjs/common";
+import { VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -39,18 +33,6 @@ async function bootstrap() {
     maxAge: 600,
     credentials: true,
   });
-
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      exceptionFactory: (errors: ValidationError[]) => {
-        return new UnprocessableEntityException(errors);
-      },
-    }),
-  );
 
   app.enableVersioning({
     type: VersioningType.URI,

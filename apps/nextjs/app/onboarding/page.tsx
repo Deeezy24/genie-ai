@@ -1,7 +1,9 @@
 // TODO: Add onboarding page
 
+import OnBoardingPage from "@/components/OnBoardingPage/OnBoardingPage";
+
 const page = () => {
-  return <div>page</div>;
+  return <OnBoardingPage />;
 };
 
 export default page;

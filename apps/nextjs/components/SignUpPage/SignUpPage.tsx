@@ -81,7 +81,7 @@ const Signup = () => {
       });
 
       if (completeSignUp.status !== "complete") {
-        console.log("Verification incomplete", completeSignUp);
+        toast.error("Verification incomplete");
         return;
       }
 
