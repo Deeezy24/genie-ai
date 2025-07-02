@@ -1,23 +1,26 @@
 model user_table {
-  user_id            String   @id @default(uuid()) @db.Uuid
-  user_clerk_id      String   @unique
+  user_id            String   @id
   email              String   @unique
   first_name         String
   last_name          String
   user_date_created  DateTime @default(now()) @db.Timestamptz(3)
-  user_date_updated  DateTime @updatedAt
+  user_date_updated  DateTime? @updatedAt @db.Timestamptz(3)
   user_onboarding_table user_onboarding_table?
   @@map("user_table")
-  @@index([user_clerk_id])
+  @@index([user_id])
   @@schema("user_schema")
 }
 
 model user_onboarding_table {
   user_onboarding_id String   @id @default(uuid()) @db.Uuid
   user_date_created  DateTime @default(now()) @db.Timestamptz(3)
-  user_date_updated  DateTime @updatedAt
-  user_onboarding_user_id String @unique @db.Uuid
+  user_found_us_on     String
+  user_usage           String
+  user_interest        String[]
+
+  user_onboarding_user_id String @unique
   user_table         user_table @relation(fields: [user_onboarding_user_id], references: [user_id])
+
   @@map("user_onboarding_table")
   @@index([user_onboarding_user_id])
   @@schema("user_schema")

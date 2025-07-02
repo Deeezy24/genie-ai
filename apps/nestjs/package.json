@@ -7,6 +7,7 @@
   "author": "",
   "scripts": {
     "build": "nest build",
+    "db:push": "prisma db push --schema ./prisma",
     "debug": "nest start --debug --watch",
     "dev": "nest start --watch",
     "lint": "biome check src",
