@@ -28,6 +28,6 @@ export class UserService {
       });
     });
 
-    return "This action adds a new user";
+    return { message: "Onboarding created successfully" };
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Book,
@@ -40,7 +40,9 @@ export type FormValues = {
 
 const OnBoardingPage = () => {
   const router = useRouter();
+
   const { getToken } = useAuth();
+  const { user } = useUser();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedUsage, setSelectedUsage] = useState("");
@@ -164,11 +166,14 @@ const OnBoardingPage = () => {
     try {
       const token = await getToken();
 
-      await onboardingService.createOnboarding({ data, token });
+      const response = await onboardingService.createOnboarding({ data, token });
+
+      if (response.message) {
+        await user?.reload();
+        router.push("/dashboard");
+      }
 
       toast.success("Onboarding created successfully");
-
-      router.push("/dashboard");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message ?? "Something went wrong");
