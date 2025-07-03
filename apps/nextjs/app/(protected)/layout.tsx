@@ -5,16 +5,16 @@ import { generatePageMetadata } from "../metadata";
 
 export async function generateMetadata() {
   return generatePageMetadata({
-    title: "Onboarding | Geeni AI",
-    description: "Onboarding | Geeni AI",
+    title: "Dashboard | Geeni AI",
+    description: "Dashboard | Geeni AI",
   });
 }
 
-export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { sessionClaims } = await auth();
 
-  if (sessionClaims?.metadata.onboardingComplete === true) {
-    redirect("/");
+  if (sessionClaims?.metadata.onboardingComplete === false) {
+    redirect("/onboarding");
   }
 
   return (

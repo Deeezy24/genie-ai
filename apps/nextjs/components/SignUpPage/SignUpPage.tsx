@@ -12,7 +12,6 @@ import VerifyForm from "./VerifyForm";
 
 const Signup = () => {
   const router = useRouter();
-
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const [verifying, setVerifying] = useState(false);
@@ -44,6 +43,9 @@ const Signup = () => {
         password: data.password,
         firstName: data.firstName,
         lastName: data.lastName,
+        unsafeMetadata: {
+          metadata: { onboardingComplete: false },
+        },
       });
 
       await signUp.prepareEmailAddressVerification({
@@ -98,8 +100,11 @@ const Signup = () => {
     try {
       await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/sign-up",
+        redirectUrl: "/sign-up/callback",
         redirectUrlComplete: "/onboarding",
+        unsafeMetadata: {
+          metadata: { onboardingComplete: false },
+        },
       });
     } catch (error: unknown) {
       if (error instanceof Error) {

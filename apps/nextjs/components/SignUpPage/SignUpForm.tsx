@@ -168,7 +168,7 @@ const SignupForm = ({ signUpWithEmail, form, signUpThruGoogle }: SignUpFormProps
                   </FormItem>
                 )}
               />
-              <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible" />
+              <div id="clerk-captcha" data-cl-theme="dark" data-cl-size="flexible"></div>
 
               <Button type="submit" disabled={form.formState.isSubmitting} className="w-full ">
                 {form.formState.isSubmitting ? (

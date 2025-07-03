@@ -23,7 +23,7 @@ export class UserService {
 
       await this.clerk.users.updateUserMetadata(user.id, {
         publicMetadata: {
-          onboarding_completed: true,
+          onboardingComplete: true,
         },
       });
     });

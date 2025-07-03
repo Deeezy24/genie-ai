@@ -49,8 +49,8 @@ const Signin = () => {
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/sign-in",
-        redirectUrlComplete: "/dasboard",
+        redirectUrl: "/sign-in/callback",
+        redirectUrlComplete: "/dashboard",
       });
     } catch (error: unknown) {
       if (error instanceof Error) {
