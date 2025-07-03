@@ -113,7 +113,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+    <div className="min-h-screen flex items-center justify-center">
       {!verifying ? (
         <SignupForm signUpThruGoogle={handleGoogleSignUp} signUpWithEmail={signUpWithEmail} form={signupForm} />
       ) : (
