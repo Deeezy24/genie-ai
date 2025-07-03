@@ -2,8 +2,8 @@
 import { Metadata } from "next";
 
 const BASE_URL = "http://localhost:3000";
-const SITE_NAME = "Geeni ai";
-const DEFAULT_DESCRIPTION = "Geeni ai";
+const SITE_NAME = "CoverGenie";
+const DEFAULT_DESCRIPTION = "CoverGenie";
 
 export const defaultMetadata: Metadata = {
   title: {

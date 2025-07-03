@@ -5,8 +5,8 @@ import { generatePageMetadata } from "../metadata";
 
 export async function generateMetadata() {
   return generatePageMetadata({
-    title: "Onboarding | Geeni AI",
-    description: "Onboarding | Geeni AI",
+    title: "Onboarding | CoverGenie",
+    description: "Onboarding | CoverGenie",
   });
 }
 
