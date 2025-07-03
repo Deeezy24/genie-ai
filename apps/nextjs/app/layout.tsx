@@ -11,8 +11,8 @@ const fontSans = Inter({
 
 export async function generateMetadata() {
   return generatePageMetadata({
-    title: "CoverGenie",
-    description: "CoverGenie",
+    title: "CoverGenie | AI Cover Generator",
+    description: "CoverGenie | AI Cover Generator",
   });
 }
 
