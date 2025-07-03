@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { SignInSchema } from "./schema";
 
@@ -12,4 +13,36 @@ export type NormalisedAxiosError = {
   message: string;
   data?: unknown;
   raw: unknown;
+};
+
+export interface NavSubItem {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  comingSoon?: boolean;
+  newTab?: boolean;
+}
+
+export type NavMainItem = {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  subItems?: NavSubItem[];
+  comingSoon?: boolean;
+  newTab?: boolean;
+};
+
+export type NavGroup = {
+  id: number;
+  label?: string;
+  items: NavMainItem[];
+};
+
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  imageUrl: string;
+  email: string;
 };

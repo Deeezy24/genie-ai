@@ -2,6 +2,7 @@ import { Providers } from "@/components/providers";
 import "@workspace/ui/globals.css";
 import { Inter } from "next/font/google";
 import Script from "next/script";
+import NextTopLoader from "nextjs-toploader";
 import { generatePageMetadata } from "./metadata";
 
 const fontSans = Inter({
@@ -34,6 +35,7 @@ export default function RootLayout({
       </head>
 
       <body className={`${fontSans.variable} font-sans antialiased `}>
+        <NextTopLoader />
         <Providers>{children}</Providers>
       </body>
     </html>
