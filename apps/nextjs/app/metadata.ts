@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 const BASE_URL = "http://localhost:3000";
 const SITE_NAME = "CoverGenie";
-const DEFAULT_DESCRIPTION = "CoverGenie";
+const DEFAULT_DESCRIPTION = "CoverGenie | AI Cover Generator";
 
 export const defaultMetadata: Metadata = {
   title: {
