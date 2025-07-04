@@ -8,11 +8,11 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post("onboarding")
-  create(@Body() createUserOnboardingDto: UserOnboardingDto, @Req() req: FastifyRequestWithUser) {
+  async create(@Body() createUserOnboardingDto: UserOnboardingDto, @Req() req: FastifyRequestWithUser) {
     try {
       const user = req.user;
 
-      return this.userService.createOnboarding(createUserOnboardingDto, user);
+      return await this.userService.createOnboarding(createUserOnboardingDto, user);
     } catch (error) {
       throw new BadRequestException(error);
     }

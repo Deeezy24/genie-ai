@@ -50,7 +50,7 @@ const Signin = () => {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sign-in/callback",
-        redirectUrlComplete: "/dashboard",
+        redirectUrlComplete: "/m/0/dashboard",
       });
     } catch (error: unknown) {
       if (error instanceof Error) {

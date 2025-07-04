@@ -59,15 +59,15 @@ export function AccountSwitcher({ user }: Props) {
 
         {/* —–– menu items —–– */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => handlePushToLink("/account")}>
+          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account")}>
             <BadgeCheck className="mr-2 size-4" />
             Account
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handlePushToLink("/billing")}>
+          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account/billing")}>
             <CreditCard className="mr-2 size-4" />
             Billing
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handlePushToLink("/notifications")}>
+          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/notifications")}>
             <Bell className="mr-2 size-4" />
             Notifications
           </DropdownMenuItem>

@@ -3,18 +3,18 @@ import { redirect } from "next/navigation";
 import UserWelcome from "@/components/Reusable/UserWelcome";
 import { generatePageMetadata } from "../metadata";
 
-export async function generateMetadata() {
+export const generateMetadata = () => {
   return generatePageMetadata({
     title: "Onboarding | CoverGenie",
     description: "Onboarding | CoverGenie",
   });
-}
+};
 
-export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
+const OnboardingLayout = async ({ children }: { children: React.ReactNode }) => {
   const { sessionClaims } = await auth();
 
   if (sessionClaims?.metadata.onboardingComplete === true) {
-    redirect("/");
+    redirect("/m/0/dashboard");
   }
 
   return (
@@ -30,4 +30,6 @@ export default async function OnboardingLayout({ children }: { children: React.R
       </section>
     </div>
   );
-}
+};
+
+export default OnboardingLayout;
