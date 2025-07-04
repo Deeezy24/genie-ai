@@ -49,7 +49,7 @@ const Signin = () => {
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/sign-in/callback",
+        redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: "/m/0/dashboard",
       });
     } catch (error: unknown) {
