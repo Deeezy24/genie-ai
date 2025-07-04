@@ -23,9 +23,9 @@ export const sidebarItems: NavGroup[] = [
     items: [
       {
         title: "Dashboards",
-        url: "/dashboard",
+        url: "/m/0/dashboard",
         icon: Home,
-        subItems: [{ title: "Default", url: "/dashboard", icon: ChartPie }],
+        subItems: [{ title: "Default", url: "/m/0/dashboard", icon: ChartPie }],
       },
     ],
   },
@@ -35,7 +35,7 @@ export const sidebarItems: NavGroup[] = [
     items: [
       {
         title: "Others",
-        url: "/others",
+        url: "/m/0/others",
         icon: SquareArrowUpRight,
         comingSoon: true,
       },

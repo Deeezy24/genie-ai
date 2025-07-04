@@ -17,7 +17,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   }
 
   if (userId && isPublicRoute(req)) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/m/0/dashboard", req.url));
   }
 
   if (userId && !sessionClaims?.metadata?.onboardingComplete) {

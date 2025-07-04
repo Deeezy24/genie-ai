@@ -1,15 +1,15 @@
 import { generatePageMetadata } from "@/app/metadata";
-import SignInPage from "@/components/SignInPage/SignInPage";
+import AccountPage from "@/components/AccountPage/AccountPage";
 
 export const generateMetadata = () => {
   return generatePageMetadata({
-    title: "Sign In | CoverGenie",
-    description: "Sign In | CoverGenie",
+    title: "Account | CoverGenie",
+    description: "Account | CoverGenie",
   });
 };
 
 const page = () => {
-  return <SignInPage />;
+  return <AccountPage />;
 };
 
 export default page;

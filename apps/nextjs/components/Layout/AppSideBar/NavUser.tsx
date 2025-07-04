@@ -71,15 +71,15 @@ export function NavUser({ user }: { readonly user: User | null }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => handlePushToLink("/account")}>
+              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account")}>
                 <CircleUser />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handlePushToLink("/billing")}>
+              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account/billing")}>
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handlePushToLink("/notifications")}>
+              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/notifications")}>
                 <MessageSquareDot />
                 Notifications
               </DropdownMenuItem>

@@ -8,7 +8,7 @@ import { Breadcrumbs } from "@/components/Layout/AppSideBar/BreadCrumbs";
 import { ThemeSwitcher } from "@/components/Layout/AppSideBar/ThemeSwitcher";
 import { User } from "@/lib/types";
 
-export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
+const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const { sessionClaims } = await auth();
 
   if (!sessionClaims) {
@@ -56,4 +56,6 @@ export default async function ProtectedLayout({ children }: { children: React.Re
       </SidebarInset>
     </SidebarProvider>
   );
-}
+};
+
+export default ProtectedLayout;

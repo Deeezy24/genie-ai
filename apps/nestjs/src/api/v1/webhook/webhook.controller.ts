@@ -8,9 +8,9 @@ export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
   @Public()
   @Post("/user-created")
-  createUserWebhook(@Body() userCreatedWebhook: UserCreatedWebhook) {
+  async createUserWebhook(@Body() userCreatedWebhook: UserCreatedWebhook) {
     try {
-      return this.webhookService.createUserWebhook(userCreatedWebhook);
+      return await this.webhookService.createUserWebhook(userCreatedWebhook);
     } catch (error) {
       throw new BadRequestException("Failed to create user webhook");
     }
