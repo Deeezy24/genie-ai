@@ -101,7 +101,7 @@ const Signup = () => {
     try {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/sign-up/callback",
+        redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: "/onboarding",
       });
     } catch (error: unknown) {
