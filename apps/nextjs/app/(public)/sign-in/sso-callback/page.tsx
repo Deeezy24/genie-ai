@@ -1,10 +1,12 @@
-import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
+import { Suspense } from "react";
+import SsoCallBackPage from "@/components/SsoCallbackPage/SsoCallBackPage";
 
 const page = () => {
-  // Handle the redirect flow by calling the Clerk.handleRedirectCallback() method
-  // or rendering the prebuilt <AuthenticateWithRedirectCallback/> component.
-  // This is the final step in the custom OAuth flow.
-  return <AuthenticateWithRedirectCallback />;
+  return (
+    <Suspense fallback={null}>
+      <SsoCallBackPage />
+    </Suspense>
+  );
 };
 
 export default page;

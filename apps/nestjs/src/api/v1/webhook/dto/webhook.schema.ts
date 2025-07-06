@@ -19,7 +19,7 @@ const HttpRequest = z.object({
 
 export const userCreatedWebhookSchema = z.object({
   object: z.literal("event"),
-  type: z.literal("user.created"),
+  type: z.enum(["user.created", "user.updated", "user.deleted"]),
   timestamp: z.number(),
   data: z.object({
     id: z.string(),

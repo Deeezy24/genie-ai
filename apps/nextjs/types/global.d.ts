@@ -6,4 +6,7 @@ declare global {
       onboardingComplete?: boolean;
     };
   }
+  interface Window {
+    google: any;
+  }
 }

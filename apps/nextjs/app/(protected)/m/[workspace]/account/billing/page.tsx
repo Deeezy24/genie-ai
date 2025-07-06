@@ -1,5 +1,7 @@
+import BillingPage from "@/components/BillingPage/BillingPage";
+
 const page = () => {
-  return <div>page</div>;
+  return <BillingPage />;
 };
 
 export default page;
