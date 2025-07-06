@@ -51,7 +51,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
         </header>
 
         <section className="flex-1 overflow-auto">
-          <div className="container mx-auto max-w-screen-2xl p-4 md:p-6 lg:p-8">{children}</div>
+          <div className=" w-full p-4 md:p-6 lg:p-8">{children}</div>
         </section>
       </SidebarInset>
     </SidebarProvider>
