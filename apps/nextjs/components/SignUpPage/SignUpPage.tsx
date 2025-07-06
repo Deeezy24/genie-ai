@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useSignUp } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,7 +13,6 @@ import VerifyForm from "./VerifyForm";
 const Signup = () => {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
-  const { signIn, isLoaded: isSignInLoaded } = useSignIn();
 
   const [verifying, setVerifying] = useState(false);
 
@@ -96,10 +95,10 @@ const Signup = () => {
   };
 
   const handleGoogleSignUp = async () => {
-    if (!isSignInLoaded) return;
+    if (!isLoaded) return;
 
     try {
-      await signIn.authenticateWithRedirect({
+      await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: "/onboarding",

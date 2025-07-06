@@ -170,7 +170,7 @@ const OnBoardingPage = () => {
 
       if (response.message) {
         await user?.reload();
-        router.push("/dashboard");
+        router.push("/m/0/dashboard");
       }
 
       toast.success("Onboarding created successfully");
