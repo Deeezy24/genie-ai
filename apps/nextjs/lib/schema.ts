@@ -32,3 +32,18 @@ export const verifySchema = z.object({
 });
 
 export type VerifySchema = z.infer<typeof verifySchema>;
+
+//change password
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(8, "Must be at least 8 chars"),
+    newPassword: z.string().min(8, "Must be at least 8 chars"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;

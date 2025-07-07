@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, user_table } from "@prisma/client";
 import { UserCreatedWebhook } from "./dto/webhook.schema";
 
 @Injectable()
@@ -7,14 +7,28 @@ export class WebhookService {
   constructor(@Inject("PrismaClient") private readonly prisma: PrismaClient) {}
 
   async createUserWebhook(userCreatedWebhook: UserCreatedWebhook) {
-    const user = await this.prisma.user_table.create({
-      data: {
-        user_id: userCreatedWebhook.data.id,
-        email: userCreatedWebhook.data.email_addresses[0]?.email_address ?? "",
-        first_name: userCreatedWebhook.data.first_name ?? "",
-        last_name: userCreatedWebhook.data.last_name ?? "",
-      },
-    });
+    let user: user_table | null = null;
+    switch (userCreatedWebhook.type) {
+      case "user.created":
+        user = await this.prisma.user_table.create({
+          data: {
+            user_id: userCreatedWebhook.data.id,
+            email: userCreatedWebhook.data.email_addresses[0]?.email_address ?? "",
+            first_name: userCreatedWebhook.data.first_name ?? "",
+            last_name: userCreatedWebhook.data.last_name ?? "",
+          },
+        });
+        break;
+      case "user.deleted":
+        user = await this.prisma.user_table.delete({
+          where: {
+            user_id: userCreatedWebhook.data.id,
+          },
+        });
+        break;
+      default:
+        break;
+    }
 
     return user;
   }
