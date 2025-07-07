@@ -31,7 +31,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       </head>
 
       <body className={`${fontSans.variable} font-sans antialiased `}>
-        <NextTopLoader />
+        <NextTopLoader showSpinner={false} />
         <Providers>{children}</Providers>
       </body>
     </html>
