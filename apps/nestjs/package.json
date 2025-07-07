@@ -12,6 +12,7 @@
     "dev": "nest start --watch",
     "lint": "biome check src",
     "lint:fix": "biome check --apply src",
+    "prisma:generate": "prisma generate --schema ./prisma",
     "start": "nest start",
     "start:prod": "node dist/main"
   },

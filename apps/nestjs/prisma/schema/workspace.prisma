@@ -1,0 +1,64 @@
+
+model workspace_table {
+  workspace_id           String   @id @default(cuid())       
+  workspace_name         String
+  workspace_date_created DateTime @default(now()) @db.Timestamptz(3)
+  workspace_date_updated DateTime @updatedAt      @db.Timestamptz(3)
+
+  members  workspace_member_table[]
+  roles    workspace_role_table[]
+
+  @@map("workspace_table")
+  @@schema("workspace_schema")
+}
+
+model workspace_member_table {
+  workspace_member_id           String  @id @default(uuid()) @db.Uuid
+  workspace_member_workspace_id String                                  
+  workspace_member_user_id      String                       
+
+  workspace_member_joined_at    DateTime @default(now()) @db.Timestamptz(3)
+
+  workspace workspace_table @relation(fields: [workspace_member_workspace_id], references: [workspace_id])
+
+  user user_table @relation(fields: [workspace_member_user_id], references: [user_id])
+ 
+  roles workspace_role_table[]
+
+  @@index([workspace_member_workspace_id])
+  @@map("workspace_member_table")
+  @@schema("workspace_schema")
+}
+
+model workspace_role_table {
+  workspace_id             String                         
+  workspace_role_member_id String  @db.Uuid                 
+  workspace_role_name      String                              
+  workspace_role_assigned_at DateTime @default(now()) @db.Timestamptz(3)
+
+  workspace workspace_table  @relation(fields: [workspace_id], references: [workspace_id])
+
+  workspace_member workspace_member_table  @relation(fields: [workspace_role_member_id], references: [workspace_member_id])
+
+  permissions workspace_role_permission_table[]
+
+  @@id([workspace_id, workspace_role_member_id, workspace_role_name])
+  @@unique([workspace_id, workspace_role_member_id])
+  @@index([workspace_role_member_id])
+  @@map("workspace_role_table")
+  @@schema("workspace_schema")
+}
+
+model workspace_role_permission_table {
+  workspace_id                         String
+  workspace_role_permission_member_id  String  @db.Uuid
+  workspace_role_permission_permission String
+  workspace_role_permission_granted_at DateTime @default(now()) @db.Timestamptz(3)
+
+  role workspace_role_table  @relation(fields: [workspace_id, workspace_role_permission_member_id], references: [workspace_id, workspace_role_member_id])
+
+  @@id([workspace_id, workspace_role_permission_member_id])
+  @@index([workspace_role_permission_member_id])
+  @@map("workspace_role_permission_table")
+  @@schema("workspace_schema")
+}
