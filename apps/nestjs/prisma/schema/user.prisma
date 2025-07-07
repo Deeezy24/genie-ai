@@ -5,7 +5,10 @@ model user_table {
   last_name          String
   user_date_created  DateTime @default(now()) @db.Timestamptz(3)
   user_date_updated  DateTime? @updatedAt @db.Timestamptz(3)
+
   user_onboarding_table user_onboarding_table?
+  workspace_member_table workspace_member_table[]
+
   @@map("user_table")
   @@index([user_id])
   @@schema("user_schema")
