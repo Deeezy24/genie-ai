@@ -1,7 +1,6 @@
 "use client";
 import { useSignIn } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import SigninForm from "@/components/SignInPage/SignInForm";
@@ -9,7 +8,6 @@ import { SignInSchema, signInSchema } from "@/lib/schema";
 
 const Signin = () => {
   const { isLoaded, signIn, setActive } = useSignIn();
-  const router = useRouter();
 
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
@@ -30,7 +28,6 @@ const Signin = () => {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
 
-        router.push(result.pathRoot || "/");
         toast.success("Signed in successfully");
       } else {
         toast.error("Failed to sign in");
@@ -50,7 +47,7 @@ const Signin = () => {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/m/0/dashboard",
+        redirectUrlComplete: "/sso-callback",
       });
     } catch (error: unknown) {
       if (error instanceof Error) {

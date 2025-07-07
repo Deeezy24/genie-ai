@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Req } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Post, Req } from "@nestjs/common";
 import type { FastifyRequestWithUser } from "@/utils/types";
 import { UserOnboardingDto } from "./dto/user.schema";
 import { UserService } from "./user.service";
@@ -7,12 +7,23 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post("/get-user-data")
+  @Get("/get-user-data")
   async getUserData(@Req() req: FastifyRequestWithUser) {
     try {
       const user = req.user;
 
       return await this.userService.getUserData(user);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Get("/get-default-workspace")
+  async getDefaultWorkspace(@Req() req: FastifyRequestWithUser) {
+    try {
+      const user = req.user;
+
+      return await this.userService.getDefaultWorkspace(user);
     } catch (error) {
       throw new BadRequestException(error);
     }
