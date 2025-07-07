@@ -2,46 +2,62 @@
 
 import { useClerk } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { userService } from "@/services/user/user-service";
 
 const SsoCallBackPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { handleRedirectCallback, setActive } = useClerk();
 
-  let isSignUp = false;
+  const [isSignUp, setIsSignUp] = useState(false);
 
   useEffect(() => {
     const run = async () => {
       try {
         const params = Object.fromEntries(searchParams.entries());
-        const resUnknown = await handleRedirectCallback(params, async (to) => {
+
+        const result = await handleRedirectCallback(params, async (to) => {
           return router.replace(to);
         });
 
-        if (typeof resUnknown !== "object" || resUnknown === null) {
-          isSignUp = true;
-          return;
-        }
-        const res = resUnknown as {
-          createdSessionId?: string;
-          signUp?: unknown;
-        };
-
-        if (res.createdSessionId) {
-          await setActive({ session: res.createdSessionId });
-          router.replace("/m/0/dashboard");
+        if (typeof result !== "object" || result === null) {
+          setIsSignUp(true);
           return;
         }
 
-        if (res.signUp) {
-          isSignUp = true;
+        const { createdSessionId, signUp } = result as { createdSessionId: string; signUp: boolean };
+
+        if (signUp) {
+          setIsSignUp(true);
           router.replace("/onboarding");
           return;
         }
-        isSignUp = true;
+
+        if (createdSessionId) {
+          await setActive({ session: createdSessionId });
+
+          // 👇 NEW: Fetch workspaces and redirect accordingly
+          const workspaceId = await userService.getDefaultWorkspace(null);
+
+          if (!workspaceId) {
+            toast.error("Failed to fetch workspaces.");
+            router.replace("/sign-in");
+            return;
+          }
+
+          if (workspaceId) {
+            router.replace(`/m/${workspaceId}/dashboard`);
+          }
+
+          return;
+        }
+
+        setIsSignUp(true);
         router.replace("/sso-callback");
       } catch (err) {
+        toast.error("Authentication failed.");
         router.replace("/sign-in");
       }
     };

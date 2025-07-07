@@ -168,9 +168,9 @@ const OnBoardingPage = () => {
 
       const response = await onboardingService.createOnboarding({ data, token });
 
-      if (response.message) {
+      if (response.workspace) {
         await user?.reload();
-        router.push("/m/0/dashboard");
+        router.push(`/m/${response.workspace}/dashboard`);
       }
 
       toast.success("Onboarding created successfully");
