@@ -16,7 +16,7 @@ const CardLandingPage = ({ icon, title, description, content }: props) => {
         {content.map((item) => (
           <ul key={item} className="space-y-2">
             <li className="flex items-center text-sm">
-              <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
+              <CheckCircle className="w-4 h-4 text-amber-400 mr-2" />
               {item}
             </li>
           </ul>

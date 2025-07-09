@@ -3,6 +3,7 @@ import FeaturesSection from "@/components/LandingPage/FeaturesSection";
 import Footer from "@/components/LandingPage/Footer";
 import HeaderComponent from "@/components/LandingPage/HeaderComponent";
 import HeroSection from "@/components/LandingPage/HeroSection";
+import PricingSection from "@/components/LandingPage/PricingSection";
 
 const LandingPage = () => {
   return (
@@ -15,6 +16,9 @@ const LandingPage = () => {
 
       {/* Features Section */}
       <FeaturesSection />
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* CTA Section */}
       <CallToAction />
