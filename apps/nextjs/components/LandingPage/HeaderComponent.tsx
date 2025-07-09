@@ -17,7 +17,7 @@ const HeaderComponent = () => {
             Features
           </Link>
           <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
-            Pricingss
+            Pricings
           </Link>
           <Link href="/sign-in" className="text-muted-foreground hover:text-foreground transition-colors">
             Sign In
