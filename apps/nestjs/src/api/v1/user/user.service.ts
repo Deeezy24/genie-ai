@@ -56,23 +56,48 @@ export class UserService {
 
   async createOnboarding(createUserOnboardingDto: UserOnboardingDto, user: User) {
     const workspaceData = await this.prisma.$transaction(async (tx) => {
-      const userOnboarding = await tx.user_onboarding_table.create({
+      await tx.user_onboarding_table.create({
         data: {
           user_onboarding_user_id: user.id,
           user_found_us_on: createUserOnboardingDto.foundUsOn,
           user_usage: createUserOnboardingDto.purpose,
           user_interest: createUserOnboardingDto.interests,
         },
+      });
+
+      const workspace = await this.prisma.workspace_table.create({
+        data: {
+          workspace_name: `Default Workspace - ${user.id}`,
+        },
         select: {
-          user_table: {
-            select: {
-              workspace_member_table: {
-                select: {
-                  workspace: {
-                    select: {
-                      workspace_id: true,
+          workspace_id: true,
+        },
+      });
+
+      await this.prisma.workspace_member_table.create({
+        data: {
+          workspace_member_workspace_id: workspace.workspace_id,
+          workspace_member_user_id: user.id,
+          roles: {
+            create: {
+              workspace_id: workspace.workspace_id,
+              workspace_role_name: "ADMIN",
+              permissions: {
+                createMany: {
+                  data: [
+                    {
+                      workspace_role_permission_permission: "CREATE",
                     },
-                  },
+                    {
+                      workspace_role_permission_permission: "READ",
+                    },
+                    {
+                      workspace_role_permission_permission: "UPDATE",
+                    },
+                    {
+                      workspace_role_permission_permission: "DELETE",
+                    },
+                  ],
                 },
               },
             },
@@ -80,8 +105,7 @@ export class UserService {
         },
       });
 
-      const workspace = userOnboarding?.user_table?.workspace_member_table?.[0]?.workspace?.workspace_id;
-      return workspace;
+      return workspace.workspace_id;
     });
 
     await this.clerk.users.updateUserMetadata(user.id, {
