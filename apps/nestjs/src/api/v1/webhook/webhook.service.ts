@@ -29,41 +29,12 @@ export class WebhookService {
             email: userCreatedWebhook.data.email_addresses[0]?.email_address ?? "",
             first_name: userCreatedWebhook.data.first_name ?? "",
             last_name: userCreatedWebhook.data.last_name ?? "",
-            workspace_member_table: {
-              create: {
-                workspace_member_workspace_id: workspace.workspace_id,
-                roles: {
-                  create: {
-                    workspace_id: workspace.workspace_id,
-                    workspace_role_name: "ADMIN",
-                    permissions: {
-                      createMany: {
-                        data: [
-                          {
-                            workspace_role_permission_permission: "CREATE",
-                          },
-                          {
-                            workspace_role_permission_permission: "READ",
-                          },
-                          {
-                            workspace_role_permission_permission: "UPDATE",
-                          },
-                          {
-                            workspace_role_permission_permission: "DELETE",
-                          },
-                        ],
-                      },
-                    },
-                  },
-                },
-              },
-            },
           },
         });
 
         await this.clerk.users.updateUserMetadata(userCreatedWebhook.data.id, {
           publicMetadata: {
-            workspace_id: workspace.workspace_id,
+            onboardingComplete: false,
           },
         });
 
