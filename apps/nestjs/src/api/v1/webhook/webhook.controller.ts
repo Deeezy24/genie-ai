@@ -14,6 +14,7 @@ export class WebhookController {
 
       return {
         message: "event triggered successfully",
+        status: 200,
       };
     } catch (error) {
       throw new BadRequestException("Failed to create user webhook");
