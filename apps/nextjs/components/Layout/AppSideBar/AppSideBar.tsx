@@ -16,16 +16,16 @@ import type { NavGroup, User } from "@/lib/types";
 import { NavMain } from "./NavMain";
 import { NavUser } from "./NavUser";
 
-export const sidebarItems: NavGroup[] = [
+export const sidebarItems = (user: User): NavGroup[] => [
   {
     id: 1,
     label: "Dashboards",
     items: [
       {
         title: "Dashboards",
-        url: "/m/0/dashboard",
+        url: `/m/${user.currentWorkspace}/dashboard`,
         icon: Home,
-        subItems: [{ title: "Default", url: "/m/0/dashboard", icon: ChartPie }],
+        subItems: [{ title: "Default", url: `/m/${user.currentWorkspace}/dashboard`, icon: ChartPie }],
       },
     ],
   },
@@ -62,7 +62,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={sidebarItems} />
+        <NavMain items={sidebarItems(user)} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

@@ -4,7 +4,6 @@ import { useClerk } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { userService } from "@/services/user/user-service";
 
 const SsoCallBackPage = () => {
   const router = useRouter();
@@ -18,12 +17,11 @@ const SsoCallBackPage = () => {
       try {
         const params = Object.fromEntries(searchParams.entries());
 
-        const result = await handleRedirectCallback(params, async (to) => {
-          return router.replace(to);
-        });
+        const result = await handleRedirectCallback(params);
 
-        if (typeof result !== "object" || result === null) {
-          setIsSignUp(true);
+        if (!result) {
+          toast.error("Session not found. Try signing in again.");
+          router.replace("/sign-in");
           return;
         }
 
@@ -37,26 +35,15 @@ const SsoCallBackPage = () => {
 
         if (createdSessionId) {
           await setActive({ session: createdSessionId });
-
-          // 👇 NEW: Fetch workspaces and redirect accordingly
-          const workspaceId = await userService.getDefaultWorkspace(null);
-
-          if (!workspaceId) {
-            toast.error("Failed to fetch workspaces.");
-            router.replace("/sign-in");
-            return;
-          }
-
-          if (workspaceId) {
-            router.replace(`/m/${workspaceId}/dashboard`);
-          }
-
+          router.replace("/callback");
           return;
         }
 
-        setIsSignUp(true);
-        router.replace("/sso-callback");
+        // fallback
+        toast.error("Something went wrong. Try again.");
+        router.replace("/sign-in");
       } catch (err) {
+        console.error("SSO error:", err);
         toast.error("Authentication failed.");
         router.replace("/sign-in");
       }

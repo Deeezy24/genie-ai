@@ -37,8 +37,8 @@ export function AccountSwitcher({ user }: Props) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="size-9 rounded-lg">
-          <AvatarImage src={user?.imageUrl || undefined} alt={user?.firstName || ""} />
-          <AvatarFallback className="rounded-lg">{getInitials(user?.firstName || "")}</AvatarFallback>
+          <AvatarImage src={user?.imageUrl || undefined} alt={user.firstName || ""} />
+          <AvatarFallback className="rounded-lg">{getInitials(user.firstName || "")}</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
 
@@ -46,8 +46,8 @@ export function AccountSwitcher({ user }: Props) {
         {/* —–– user header —–– */}
         <div className="flex items-center gap-2 p-3">
           <Avatar className="size-9 rounded-lg">
-            <AvatarImage src={user?.imageUrl || undefined} alt={user?.firstName || ""} />
-            <AvatarFallback className="rounded-lg">{getInitials(user?.firstName || "")}</AvatarFallback>
+            <AvatarImage src={user?.imageUrl || undefined} alt={user.firstName || ""} />
+            <AvatarFallback className="rounded-lg">{getInitials(user.firstName || "")}</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left leading-tight">
             <span className="truncate font-semibold text-sm">{user?.firstName}</span>
@@ -59,15 +59,15 @@ export function AccountSwitcher({ user }: Props) {
 
         {/* —–– menu items —–– */}
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account")}>
+          <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/account`)}>
             <BadgeCheck className="mr-2 size-4" />
             Account
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account/billing")}>
+          <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/account/billing`)}>
             <CreditCard className="mr-2 size-4" />
             Billing
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => handlePushToLink("/m/0/notifications")}>
+          <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/notifications`)}>
             <Bell className="mr-2 size-4" />
             Notifications
           </DropdownMenuItem>

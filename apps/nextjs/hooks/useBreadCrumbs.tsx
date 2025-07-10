@@ -34,12 +34,11 @@ export function useBreadcrumbs(): BreadcrumbItem[] {
   const searchParams = useSearchParams(); // e.g. "?mode=edit"
 
   return useMemo(() => {
-    const segmentsToRemove = ["m", "0"];
     /** Strip query/hash and split into segments */
     const segments = pathname
       .replace(/^\/|\/$/g, "") // trim leading/trailing slash
       .split("/")
-      .filter((segment) => !segmentsToRemove.includes(segment)); // ["dashboard","employee","123","edit"]
+      .slice(2); // skip the first two segments
 
     const crumbs: BreadcrumbItem[] = [];
 

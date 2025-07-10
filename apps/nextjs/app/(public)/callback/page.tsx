@@ -3,7 +3,6 @@
 import { Protect } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import { userService } from "@/services/user/user-service";
 
 export default function PostAuth() {
@@ -20,7 +19,6 @@ export default function PostAuth() {
 
         router.replace(`/m/${workspaceId}/dashboard`);
       } catch (_) {
-        toast.error("Could not load workspaces");
         router.replace("/sign-out"); // fallback
       }
     })();

@@ -1,12 +1,7 @@
-import { Suspense } from "react";
-import SsoCallBackPage from "@/components/SsoCallbackPage/SsoCallBackPage";
+import { AuthenticateWithRedirectCallback } from "@clerk/nextjs";
 
 const page = () => {
-  return (
-    <Suspense fallback={null}>
-      <SsoCallBackPage />
-    </Suspense>
-  );
+  return <AuthenticateWithRedirectCallback signUpForceRedirectUrl={"/onboarding"} />;
 };
 
 export default page;
