@@ -21,6 +21,14 @@ export class WebhookService {
             first_name: userCreatedWebhook.data.first_name ?? "",
             last_name: userCreatedWebhook.data.last_name ?? "",
           },
+          select: {
+            user_id: true,
+            email: true,
+            first_name: true,
+            last_name: true,
+            user_date_created: true,
+            user_date_updated: true,
+          },
         });
 
         await this.clerk.users.updateUserMetadata(userCreatedWebhook.data.id, {
