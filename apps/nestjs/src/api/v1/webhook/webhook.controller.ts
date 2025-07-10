@@ -10,7 +10,11 @@ export class WebhookController {
   @Post("/user-created")
   async createUserWebhook(@Body() userCreatedWebhook: UserCreatedWebhook) {
     try {
-      return await this.webhookService.createUserWebhook(userCreatedWebhook);
+      await this.webhookService.createUserWebhook(userCreatedWebhook);
+
+      return {
+        message: "event triggered successfully",
+      };
     } catch (error) {
       throw new BadRequestException("Failed to create user webhook");
     }
