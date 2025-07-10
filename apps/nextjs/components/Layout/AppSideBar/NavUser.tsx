@@ -17,14 +17,15 @@ import { CircleUser, CreditCard, EllipsisVertical, LogOut, MessageSquareDot } fr
 import { useRouter } from "nextjs-toploader/app";
 import { User } from "@/lib/types";
 
-export function NavUser({ user }: { readonly user: User | null }) {
+export function NavUser({ user }: { readonly user: User }) {
   const { isMobile } = useSidebar();
   const { signOut } = useClerk();
   const router = useRouter();
 
   const handleSignOut = async () => {
     await signOut();
-    router.push("/sign-in");
+
+    router.refresh();
   };
 
   const handlePushToLink = (link: string) => {
@@ -41,8 +42,8 @@ export function NavUser({ user }: { readonly user: User | null }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user?.imageUrl || undefined} alt={user?.firstName || ""} />
-                <AvatarFallback className="rounded-lg">{getInitials(user?.firstName || "")}</AvatarFallback>
+                <AvatarImage src={user?.imageUrl || undefined} alt={user.firstName || ""} />
+                <AvatarFallback className="rounded-lg">{getInitials(user.firstName || "")}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user?.firstName}</span>
@@ -60,8 +61,8 @@ export function NavUser({ user }: { readonly user: User | null }) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.imageUrl || undefined} alt={user?.firstName || ""} />
-                  <AvatarFallback className="rounded-lg">{getInitials(user?.firstName || "")}</AvatarFallback>
+                  <AvatarImage src={user?.imageUrl || undefined} alt={user.firstName || ""} />
+                  <AvatarFallback className="rounded-lg">{getInitials(user.firstName || "")}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user?.firstName}</span>
@@ -71,15 +72,15 @@ export function NavUser({ user }: { readonly user: User | null }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account")}>
+              <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/account`)}>
                 <CircleUser />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/account/billing")}>
+              <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/account/billing`)}>
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handlePushToLink("/m/0/notifications")}>
+              <DropdownMenuItem onClick={() => handlePushToLink(`/m/${user.currentWorkspace}/notifications`)}>
                 <MessageSquareDot />
                 Notifications
               </DropdownMenuItem>

@@ -65,44 +65,52 @@ export class UserService {
         },
       });
 
-      const workspace = await this.prisma.workspace_table.create({
+      const workspace = await tx.workspace_table.create({
         data: {
           workspace_name: `Default Workspace - ${user.id}`,
         },
-        select: {
-          workspace_id: true,
-        },
       });
 
-      await this.prisma.workspace_member_table.create({
+      const member = await tx.workspace_member_table.create({
         data: {
           workspace_member_workspace_id: workspace.workspace_id,
           workspace_member_user_id: user.id,
-          roles: {
-            create: {
-              workspace_id: workspace.workspace_id,
-              workspace_role_name: "ADMIN",
-              permissions: {
-                createMany: {
-                  data: [
-                    {
-                      workspace_role_permission_permission: "CREATE",
-                    },
-                    {
-                      workspace_role_permission_permission: "READ",
-                    },
-                    {
-                      workspace_role_permission_permission: "UPDATE",
-                    },
-                    {
-                      workspace_role_permission_permission: "DELETE",
-                    },
-                  ],
-                },
-              },
-            },
-          },
         },
+      });
+
+      await tx.workspace_role_table.create({
+        data: {
+          workspace_id: workspace.workspace_id,
+          workspace_role_name: "ADMIN",
+          workspace_role_member_id: member.workspace_member_id,
+        },
+      });
+
+      // Then create permissions
+      await tx.workspace_role_permission_table.createMany({
+        data: [
+          {
+            workspace_id: workspace.workspace_id,
+            workspace_role_permission_member_id: member.workspace_member_id,
+            workspace_role_permission_permission: "CREATE",
+          },
+          {
+            workspace_id: workspace.workspace_id,
+            workspace_role_permission_member_id: member.workspace_member_id,
+            workspace_role_permission_permission: "READ",
+          },
+          {
+            workspace_id: workspace.workspace_id,
+            workspace_role_permission_member_id: member.workspace_member_id,
+            workspace_role_permission_permission: "UPDATE",
+          },
+          {
+            workspace_id: workspace.workspace_id,
+            workspace_role_permission_member_id: member.workspace_member_id,
+            workspace_role_permission_permission: "DELETE",
+          },
+        ],
+        skipDuplicates: true, // optional safeguard
       });
 
       return workspace.workspace_id;

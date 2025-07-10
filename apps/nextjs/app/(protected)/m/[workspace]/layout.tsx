@@ -8,8 +8,15 @@ import { Breadcrumbs } from "@/components/Layout/AppSideBar/BreadCrumbs";
 import { ThemeSwitcher } from "@/components/Layout/AppSideBar/ThemeSwitcher";
 import { User } from "@/lib/types";
 
-const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
+const ProtectedLayout = async ({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ workspace: string }>;
+}) => {
   const { sessionClaims } = await auth();
+  const { workspace } = await params;
 
   if (!sessionClaims) {
     redirect("/sign-in");
@@ -17,6 +24,10 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
 
   if (sessionClaims.metadata.onboardingComplete === false) {
     redirect("/onboarding");
+  }
+
+  if (workspace !== sessionClaims.metadata.currentWorkspace) {
+    redirect(`/m/${sessionClaims.metadata.currentWorkspace}/dashboard`);
   }
 
   const user = await currentUser();
@@ -29,6 +40,7 @@ const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
         fullName: user.fullName,
         imageUrl: user.imageUrl,
         email: user.emailAddresses?.[0]?.emailAddress ?? "",
+        currentWorkspace: sessionClaims.metadata.currentWorkspace,
       }
     : null;
 

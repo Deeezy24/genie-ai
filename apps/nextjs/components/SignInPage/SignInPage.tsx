@@ -34,6 +34,7 @@ const Signin = () => {
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
+        toast.error(error.message);
       } else {
         toast.error("Failed to sign in");
       }

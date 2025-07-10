@@ -45,4 +45,5 @@ export type User = {
   fullName: string;
   imageUrl: string;
   email: string;
+  currentWorkspace: string;
 };

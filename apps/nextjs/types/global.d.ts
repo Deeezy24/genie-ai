@@ -4,7 +4,7 @@ declare global {
   interface CustomJwtSessionClaims {
     metadata: {
       onboardingComplete?: boolean;
-      workspace_id?: string;
+      currentWorkspace?: string;
     };
   }
   interface Window {
