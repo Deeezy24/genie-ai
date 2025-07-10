@@ -87,6 +87,7 @@ export class UserService {
     await this.clerk.users.updateUserMetadata(user.id, {
       publicMetadata: {
         onboardingComplete: true,
+        currentWorkspace: workspaceData,
       },
     });
 
