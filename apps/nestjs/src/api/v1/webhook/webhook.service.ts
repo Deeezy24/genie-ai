@@ -14,15 +14,6 @@ export class WebhookService {
     let user: user_table | null = null;
     switch (userCreatedWebhook.type) {
       case "user.created": {
-        const workspace = await this.prisma.workspace_table.create({
-          data: {
-            workspace_name: `Default Workspace - ${userCreatedWebhook.data.id}`,
-          },
-          select: {
-            workspace_id: true,
-          },
-        });
-
         user = await this.prisma.user_table.create({
           data: {
             user_id: userCreatedWebhook.data.id,
