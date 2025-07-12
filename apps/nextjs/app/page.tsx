@@ -1,5 +1,6 @@
 import CallToAction from "@/components/LandingPage/CallToAction";
 import FeaturesSection from "@/components/LandingPage/FeaturesSection";
+import FileUploadSection from "@/components/LandingPage/FileUploadSection";
 import Footer from "@/components/LandingPage/Footer";
 import HeaderComponent from "@/components/LandingPage/HeaderComponent";
 import HeroSection from "@/components/LandingPage/HeroSection";
@@ -13,6 +14,9 @@ const LandingPage = () => {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* File Upload Section */}
+      <FileUploadSection />
 
       {/* Features Section */}
       <FeaturesSection />
