@@ -17,7 +17,7 @@ export default function PostAuth() {
 
         if (cancelled) return; // component unmounted
 
-        router.replace(`/m/${workspaceId}/dashboard`);
+        router.replace(`/m/${workspaceId}/overview`);
       } catch (_) {
         router.replace("/sign-out"); // fallback
       }

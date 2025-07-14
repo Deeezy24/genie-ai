@@ -8,6 +8,7 @@ import { ClerkClientProvider } from "./providers/clerk/clerk-client.service";
 import { OpenAiClientProvider } from "./providers/openai/openai-client.service";
 import { PrismaClientProvider } from "./providers/prisma/prisma-client.service";
 import { ClerkModule } from "./service/clerk/clerk.module";
+import { OpenAiModule } from "./service/openai/openai.module";
 import { PrismaModule } from "./service/prisma/prisma.module";
 
 @Module({
@@ -19,6 +20,7 @@ import { PrismaModule } from "./service/prisma/prisma.module";
     ApiModule,
     PrismaModule,
     ClerkModule,
+    OpenAiModule,
   ],
   providers: [
     ClerkClientProvider,
@@ -28,6 +30,7 @@ import { PrismaModule } from "./service/prisma/prisma.module";
       provide: APP_GUARD,
       useClass: ClerkAuthGuard,
     },
+
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,

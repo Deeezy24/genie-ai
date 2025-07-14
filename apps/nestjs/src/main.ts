@@ -2,6 +2,7 @@ import { VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { contentParser } from "fastify-file-interceptor";
 import { AppModule } from "./app.module";
 import { getConfig } from "./config/app/app.config";
 import { Environment } from "./constants/app.constant";
@@ -24,6 +25,8 @@ async function bootstrap() {
       logger: envToLogger[appConfig.nodeEnv],
     }),
   );
+
+  await app.register(contentParser as any);
 
   app.enableCors({
     origin: "http://localhost:3000",

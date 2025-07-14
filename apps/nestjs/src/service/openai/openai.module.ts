@@ -1,11 +1,11 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { OpenAiClientProvider } from "@/providers/openai/openai-client.service";
+import { OpenAIService } from "./openai.service";
 
 @Global()
 @Module({
   imports: [ConfigModule],
-  providers: [OpenAiClientProvider],
-  exports: [OpenAiClientProvider],
+  providers: [OpenAIService],
+  exports: [OpenAIService],
 })
-export class ClerkModule {}
+export class OpenAiModule {}

@@ -35,4 +35,21 @@ export const SYSTEM_USER_ID = "system";
 
 export const GENIE_AGENT_HELPER = {
   text: "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given text. Analyze the given text and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
-} as const;
+  image:
+    "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given image. Analyze the given image and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
+  video:
+    "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given video. Analyze the given video and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
+  audio:
+    "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given audio. Analyze the given audio and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
+  pdf: "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given pdf. Analyze the given pdf and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
+  url: "You are a helpful assistant that can help with tasks. You are going to help the user to summarize the given url. Analyze the given url and summarize it in a way that is easy to understand and use. Tonality will be given and the lenght of the summary",
+};
+
+export const MODEL_MAP_GENIE_AGENT = {
+  text: "gpt-4o-mini",
+  url: "gpt-4o-mini",
+  pdf: "gpt-4o-mini",
+  audio: "whisper-1",
+  image: "gpt-4-vision-preview",
+  video: "whisper-1 + gpt-4", // or gpt-4-vision for image frames
+};

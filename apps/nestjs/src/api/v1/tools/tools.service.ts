@@ -1,33 +1,51 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
-import OpenAI from "openai";
-import { ToolsSummaryDto } from "./dto/tools.schema";
+import { Injectable } from "@nestjs/common";
+import * as cheerio from "cheerio";
+import * as fs from "fs";
+import * as pdfParse from "pdf-parse";
+import { GENIE_AGENT_HELPER } from "@/constants/app.constant";
+import { OpenAIService } from "@/service/openai/openai.service";
 
 @Injectable()
 export class ToolsService {
-  constructor(
-    @Inject("PrismaClient") private readonly prisma: PrismaClient,
-    @Inject("OpenAiClient") private readonly openai: OpenAI,
-  ) {}
+  constructor(private readonly openaiService: OpenAIService) {}
 
-  async create(toolsSummaryDto: ToolsSummaryDto) {
-    const response = await this.openai.responses.create({
-      model: "gpt-4o-mini",
-      input: toolsSummaryDto.inputText,
-    });
-
-    return "This action adds a new tool";
+  async fetchAndCleanWebPage(url: string): Promise<string> {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    return $("body").text().replace(/\s+/g, " ").trim();
   }
 
-  async findAll() {
-    return `This action returns all tools`;
+  async extractTextFromPDF(filePath: string): Promise<string> {
+    const dataBuffer = fs.readFileSync(filePath);
+    // pdfParse is imported as a CommonJS module, so use .default
+    const data = await (pdfParse as any).default(dataBuffer);
+    return data.text;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tool`;
+  async transcribeAudio(filePath: string): Promise<string> {
+    const fileStream = fs.createReadStream(filePath);
+    const result = await this.openaiService.transcribe(fileStream);
+    return result.text;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tool`;
+  async summarizeImage(filePath: string, tone: string, length: string): Promise<string> {
+    const imageBuffer = fs.readFileSync(filePath);
+    const base64Image = imageBuffer.toString("base64");
+
+    const prompt = `${GENIE_AGENT_HELPER.image} \n\n Please summarize this image with tonality "${tone}" and length "${length}".`;
+    const result = await this.openaiService.summarizeImageWithVision(base64Image, prompt);
+    return result || "";
+  }
+
+  async transcribeVideoAudio(filePath: string): Promise<string> {
+    // Optional: extract audio with ffmpeg if needed before passing to OpenAI Whisper
+    return this.transcribeAudio(filePath);
+  }
+
+  async summarizeText(text: string, tone: string, length: string): Promise<string> {
+    const prompt = `${GENIE_AGENT_HELPER.text} \n\n Please summarize this text with tonality "${tone}" and length "${length}".`;
+    const result = await this.openaiService.summarizeText(text, prompt);
+    return result || "";
   }
 }
