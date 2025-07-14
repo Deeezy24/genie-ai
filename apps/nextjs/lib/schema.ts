@@ -34,7 +34,6 @@ export const verifySchema = z.object({
 export type VerifySchema = z.infer<typeof verifySchema>;
 
 //change password
-
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(8, "Must be at least 8 chars"),
@@ -47,3 +46,13 @@ export const changePasswordSchema = z
   });
 
 export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
+
+//genie text schema
+export const genieTextSchema = z.object({
+  summaryMode: z.enum(["Simple", "Detailed", "Bullet Points"]),
+  summaryLength: z.number().min(25).max(75),
+  inputText: z.string().trim().min(1, { message: "Text is required" }),
+  workspaceId: z.string(),
+});
+
+export type GenieTextTypes = z.infer<typeof genieTextSchema>;

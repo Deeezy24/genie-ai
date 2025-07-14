@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu";
+import { Separator } from "@workspace/ui/components/separator";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -21,7 +22,7 @@ import {
 } from "@workspace/ui/components/sidebar";
 import { ChevronRight, PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NavGroup, NavMainItem } from "@/lib/types";
 
 type NavMainProps = {
@@ -100,6 +101,12 @@ const NavItemCollapsed = ({
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
 }) => {
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push(item.url);
+  };
+
   return (
     <SidebarMenuItem key={item.title}>
       <DropdownMenu>
@@ -108,31 +115,36 @@ const NavItemCollapsed = ({
             disabled={item.comingSoon}
             tooltip={item.title}
             isActive={isActive(item.url, item.subItems)}
+            onClick={handleClick}
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
             <ChevronRight />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-50 space-y-1" side="right" align="start">
-          {item.subItems?.map((subItem) => (
-            <DropdownMenuItem key={subItem.title} asChild>
-              <SidebarMenuSubButton
-                key={subItem.title}
-                asChild
-                className="focus-visible:ring-0"
-                aria-disabled={subItem.comingSoon}
-                isActive={isActive(subItem.url)}
-              >
-                <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                  {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
-                  <span>{subItem.title}</span>
-                  {subItem.comingSoon && <IsComingSoon />}
-                </Link>
-              </SidebarMenuSubButton>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
+        {item.subItems && item.subItems.length > 0 && (
+          <DropdownMenuContent className="w-50 space-y-1" side="right" align="start">
+            {item.subItems &&
+              item.subItems.length > 0 &&
+              item.subItems?.map((subItem) => (
+                <DropdownMenuItem key={subItem.title} asChild>
+                  <SidebarMenuSubButton
+                    key={subItem.title}
+                    asChild
+                    className="focus-visible:ring-0"
+                    aria-disabled={subItem.comingSoon}
+                    isActive={isActive(subItem.url)}
+                  >
+                    <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
+                      {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
+                      <span>{subItem.title}</span>
+                      {subItem.comingSoon && <IsComingSoon />}
+                    </Link>
+                  </SidebarMenuSubButton>
+                </DropdownMenuItem>
+              ))}
+          </DropdownMenuContent>
+        )}
       </DropdownMenu>
     </SidebarMenuItem>
   );
@@ -172,10 +184,11 @@ export function NavMain({ items }: NavMainProps) {
       </SidebarGroup>
       {items.map((group) => (
         <SidebarGroup key={group.id}>
+          {group.withSeparator && <Separator className="my-2" />}
           {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
           <SidebarGroupContent className="flex flex-col gap-2">
             <SidebarMenu>
-              {group.items.map((item) =>
+              {group.items?.map((item) =>
                 state === "collapsed" && !isMobile ? (
                   <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />
                 ) : (

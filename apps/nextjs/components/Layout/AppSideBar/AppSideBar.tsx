@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@workspace/ui/components/sidebar";
-import { ChartPie, Command, Home, SquareArrowUpRight } from "lucide-react";
+import { BarChart, Command, MessageSquare, Newspaper, Settings, SquareArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import type { NavGroup, User } from "@/lib/types";
 import { NavMain } from "./NavMain";
@@ -19,25 +19,50 @@ import { NavUser } from "./NavUser";
 export const sidebarItems = (user: User): NavGroup[] => [
   {
     id: 1,
-    label: "Dashboards",
+    label: "Dashboard",
     items: [
       {
-        title: "Dashboards",
-        url: `/m/${user.currentWorkspace}/dashboard`,
-        icon: Home,
-        subItems: [{ title: "Default", url: `/m/${user.currentWorkspace}/dashboard`, icon: ChartPie }],
+        title: "Overview",
+        url: `/m/${user.currentWorkspace}/overview`,
+        icon: BarChart,
+      },
+      {
+        title: "Uploads",
+        url: `/m/${user.currentWorkspace}/uploads`,
+        icon: SquareArrowUpRight,
+      },
+      {
+        title: "Tools",
+        url: `/m/${user.currentWorkspace}/tools`,
+        icon: Settings,
+      },
+      {
+        title: "NewsLetter",
+        url: `/m/${user.currentWorkspace}/news`,
+        icon: Newspaper,
       },
     ],
   },
   {
     id: 3,
-    label: "Misc",
+    label: "Config",
     items: [
       {
-        title: "Others",
-        url: "/m/0/others",
+        title: "Documents",
+        url: `/m/${user.currentWorkspace}/documents`,
         icon: SquareArrowUpRight,
-        comingSoon: true,
+      },
+    ],
+  },
+  {
+    id: 4,
+    label: "Others",
+    withSeparator: true,
+    items: [
+      {
+        title: "Chat",
+        url: `/m/${user.currentWorkspace}/chat`,
+        icon: MessageSquare,
       },
     ],
   },

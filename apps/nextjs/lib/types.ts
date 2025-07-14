@@ -35,7 +35,9 @@ export type NavMainItem = {
 export type NavGroup = {
   id: number;
   label?: string;
-  items: NavMainItem[];
+  icon?: LucideIcon;
+  withSeparator?: boolean;
+  items?: NavMainItem[];
 };
 
 export type User = {
