@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@workspace/ui/components/breadcrumb";
-import { SlashIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Fragment } from "react";
 import { useBreadcrumbs } from "@/hooks/useBreadCrumbs";
 
@@ -27,7 +27,7 @@ export function Breadcrumbs() {
             )}
             {index < items.length - 1 && (
               <BreadcrumbSeparator className="hidden md:block">
-                <SlashIcon />
+                <ChevronRight />
               </BreadcrumbSeparator>
             )}
             {index === items.length - 1 && <BreadcrumbPage>{item.title}</BreadcrumbPage>}

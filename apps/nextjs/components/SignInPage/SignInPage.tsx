@@ -48,7 +48,7 @@ const Signin = () => {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/sso-callback",
+        redirectUrlComplete: "/sign-in/sso-callback",
       });
     } catch (error: unknown) {
       if (error instanceof Error) {
