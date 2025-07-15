@@ -8,8 +8,8 @@ const CardLandingPage = ({ icon, title, description }: props) => {
     <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
       <CardHeader>
         <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">{icon}</div>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-lg">{title}</CardTitle>
+        <CardDescription className="text-md">{description}</CardDescription>
       </CardHeader>
     </Card>
   );
