@@ -10,7 +10,7 @@ const HeaderComponent = () => {
           <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/60 rounded-lg flex items-center justify-center">
             <Brain className="w-5 h-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold">Cover Genie</span>
+          <span className="text-xl font-bold">Genie AI</span>
         </div>
         <nav className="hidden md:flex items-center space-x-6">
           <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">

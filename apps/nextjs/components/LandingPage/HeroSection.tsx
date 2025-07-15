@@ -8,15 +8,15 @@ const HeroSection = () => {
     <section className="container mx-auto px-4 py-20 text-center">
       <Badge variant="secondary" className="mb-4">
         <Sparkles className="w-3 h-3 mr-1" />
-        AI-Powered Intelligence
+        An AI Agent for your content essentials
       </Badge>
       <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-        Unleash the Power of
-        <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent"> AI</span>
+        An
+        <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent"> AI </span>
+        for your writing needs
       </h1>
       <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-        Transform your workflow with intelligent automation, smart insights, and powerful AI-driven solutions that adapt
-        to your needs.
+        Transform the way you write—summarize, paraphrase, and generate compelling content in seconds.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <Button size="lg" asChild>
@@ -24,9 +24,6 @@ const HeroSection = () => {
             Start Free Trial
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </Button>
-        <Button variant="outline" size="lg" asChild>
-          <Link href="#demo">Watch Demo</Link>
         </Button>
       </div>
     </section>
