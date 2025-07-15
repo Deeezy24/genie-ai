@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="w-6 h-6 bg-gradient-to-r from-primary to-primary/60 rounded-lg flex items-center justify-center">
               <Brain className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold">Cover Genie</span>
+            <span className="font-semibold"> Genie AI</span>
           </div>
           <div className="flex items-center space-x-6 text-sm text-muted-foreground">
             <Link href="/privacy" className="hover:text-foreground transition-colors">
@@ -24,7 +24,7 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-        <div className="text-center text-sm text-muted-foreground mt-4">© 2025 Cover Genie. All rights reserved.</div>
+        <div className="text-center text-sm text-muted-foreground mt-4">© 2025 Genie AI. All rights reserved.</div>
       </div>
     </footer>
   );
