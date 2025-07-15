@@ -53,3 +53,9 @@ export const MODEL_MAP_GENIE_AGENT = {
   image: "gpt-4-vision-preview",
   video: "whisper-1 + gpt-4", // or gpt-4-vision for image frames
 };
+
+export const SummaryLength = {
+  25: "Short",
+  50: "Medium",
+  75: "Long",
+};

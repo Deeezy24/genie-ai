@@ -18,7 +18,6 @@ export class ToolsService {
 
   async extractTextFromPDF(filePath: string): Promise<string> {
     const dataBuffer = fs.readFileSync(filePath);
-    // pdfParse is imported as a CommonJS module, so use .default
     const data = await (pdfParse as any).default(dataBuffer);
     return data.text;
   }
@@ -43,9 +42,15 @@ export class ToolsService {
     return this.transcribeAudio(filePath);
   }
 
-  async summarizeText(text: string, tone: string, length: string): Promise<string> {
+  async summarizeText(text: string, tone: string, length: string): Promise<{ message: string; data: string }> {
     const prompt = `${GENIE_AGENT_HELPER.text} \n\n Please summarize this text with tonality "${tone}" and length "${length}".`;
     const result = await this.openaiService.summarizeText(text, prompt);
-    return result || "";
+
+    const returnData = {
+      message: "Summary generated successfully",
+      data: result || "",
+    };
+
+    return returnData;
   }
 }

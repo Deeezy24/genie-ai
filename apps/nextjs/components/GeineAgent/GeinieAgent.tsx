@@ -1,7 +1,7 @@
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { FileText, FileType, Headphones, Image, Link, Youtube } from "lucide-react";
-import FileTab from "./TabsContent/FileTab";
+import TextTab from "./TabsContent/TextTab";
 
 const GeinieAgent = ({ workspace }: { workspace: string }) => {
   const tabs = [
@@ -9,7 +9,7 @@ const GeinieAgent = ({ workspace }: { workspace: string }) => {
       value: "text",
       label: "Text",
       icon: <FileText size={16} />,
-      content: <FileTab workspace={workspace} type="Text" />,
+      content: <TextTab workspace={workspace} type="text" />,
     },
     {
       value: "url",

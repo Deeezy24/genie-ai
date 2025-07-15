@@ -2,7 +2,7 @@ import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
 const SummaryTone = z.enum(["Simple", "Detailed", "Bullet Points"]);
-const SummaryLength = z.enum(["Short", "Medium", "Long"]);
+const SummaryLength = z.number().min(25).max(75);
 const SummaryType = z.enum(["text", "url", "pdf", "audio", "image", "video"]);
 
 const ToolsSchema = z
