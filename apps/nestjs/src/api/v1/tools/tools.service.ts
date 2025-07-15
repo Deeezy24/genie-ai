@@ -1,13 +1,17 @@
+import * as fs from "node:fs";
 import { Injectable } from "@nestjs/common";
 import * as cheerio from "cheerio";
-import * as fs from "fs";
 import * as pdfParse from "pdf-parse";
-import { GENIE_AGENT_HELPER } from "@/constants/app.constant";
+import { DEFAULT_MESSAGE } from "@/constants/app.constant";
+import { AnthropicService } from "@/service/anthropic/anthropic.service";
 import { OpenAIService } from "@/service/openai/openai.service";
 
 @Injectable()
 export class ToolsService {
-  constructor(private readonly openaiService: OpenAIService) {}
+  constructor(
+    private readonly openaiService: OpenAIService,
+    private readonly anthropicService: AnthropicService,
+  ) {}
 
   async fetchAndCleanWebPage(url: string): Promise<string> {
     const response = await fetch(url);
@@ -28,29 +32,66 @@ export class ToolsService {
     return result.text;
   }
 
-  async summarizeImage(filePath: string, tone: string, length: string): Promise<string> {
-    const imageBuffer = fs.readFileSync(filePath);
-    const base64Image = imageBuffer.toString("base64");
-
-    const prompt = `${GENIE_AGENT_HELPER.image} \n\n Please summarize this image with tonality "${tone}" and length "${length}".`;
-    const result = await this.openaiService.summarizeImageWithVision(base64Image, prompt);
-    return result || "";
-  }
-
   async transcribeVideoAudio(filePath: string): Promise<string> {
-    // Optional: extract audio with ffmpeg if needed before passing to OpenAI Whisper
     return this.transcribeAudio(filePath);
   }
 
   async summarizeText(text: string, tone: string, length: string): Promise<{ message: string; data: string }> {
-    const prompt = `${GENIE_AGENT_HELPER.text} \n\n Please summarize this text with tonality "${tone}" and length "${length}".`;
-    const result = await this.openaiService.summarizeText(text, prompt);
+    const prompt = this.buildPrompt(tone, `${length}`, "text");
 
-    const returnData = {
-      message: "Summary generated successfully",
-      data: result || "",
-    };
+    if (process.env.NODE_ENV === "local") {
+      return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE };
+    } else {
+      try {
+        const anthropicResult = await this.anthropicService.summarizeText(text, prompt);
+        if (!anthropicResult) {
+          throw new Error("Anthropic returned null result");
+        }
+        return { message: "Summarized with Anthropic", data: anthropicResult };
+      } catch (anthropicError) {
+        try {
+          const openAiResult = await this.openaiService.summarizeText(text, prompt);
+          if (!openAiResult) {
+            throw new Error("OpenAI returned null result");
+          }
+          return { message: "Summarized with OpenAI", data: openAiResult };
+        } catch (openAiError) {
+          throw new Error("Both LLMs failed to generate a summary.");
+        }
+      }
+    }
+  }
 
-    return returnData;
+  async summarizeImage(filePath: string, tone: string, length: string): Promise<{ message: string; data: string }> {
+    const imageBuffer = fs.readFileSync(filePath);
+    const base64Image = imageBuffer.toString("base64");
+    const prompt = this.buildPrompt(tone, length, "image");
+
+    if (process.env.NODE_ENV === "local") {
+      return { message: "Summarized with Anthropic", data: DEFAULT_MESSAGE };
+    } else {
+      try {
+        const anthropicResult = await this.anthropicService.summarizeImageWithVision(base64Image, prompt);
+        if (!anthropicResult) {
+          throw new Error("Anthropic returned null result");
+        }
+        return { message: "Summarized with Anthropic", data: anthropicResult };
+      } catch (anthropicError) {
+        try {
+          const openAiResult = await this.openaiService.summarizeImageWithVision(base64Image, prompt);
+          if (!openAiResult) {
+            throw new Error("OpenAI returned null result");
+          }
+
+          return { message: "Summarized with OpenAI", data: openAiResult };
+        } catch (openAiError) {
+          throw new Error("Both LLMs failed to summarize the image.");
+        }
+      }
+    }
+  }
+
+  private buildPrompt(tone: string, length: string, type: string): string {
+    return `Please summarize the following ${type} with a ${tone.toLowerCase()} tone. Make it ${length}.`;
   }
 }
