@@ -46,17 +46,20 @@ const PricingSection = () => {
         {pricingPlans.map((plan) => (
           <Card
             key={plan.title}
-            className={`flex flex-col border-0 shadow-lg hover:shadow-xl transition-shadow ${plan.highlight ? "ring-2 ring-primary scale-105 bg-primary/5" : ""}`}
+            className={`flex flex-col border-0 shadow-lg hover:shadow-xl transition-shadow ${plan.highlight ? "ring-1 ring-primary scale-100" : ""}`}
           >
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl mb-2">{plan.title}</CardTitle>
-              <div className="text-4xl font-bold mb-2">{plan.price}</div>
-              <CardDescription>{plan.description}</CardDescription>
+              <CardTitle className="text-2xl py-2">{plan.title}</CardTitle>
+              <div className="text-4xl font-bold py-2">
+                {plan.price}
+                <span className="text-lg font-medium">/mo</span>
+              </div>
+              <CardDescription className="text-md py-2">{plan.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
               <ul className="space-y-2">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center justify-center text-sm">
+                  <li key={feature} className="flex items-center justify-center text-md py-2">
                     <span className="w-2 h-2 bg-primary rounded-full mr-2 inline-block" />
                     {feature}
                   </li>

@@ -1,4 +1,4 @@
-import { Brain, Shield, Sparkles, Users, Zap } from "lucide-react";
+import { Brain, Sparkles, Zap } from "lucide-react";
 import CardLandingPage from "../Reusable/CardLandingPage";
 
 const LandingPageFeatures = [
@@ -15,26 +15,9 @@ const LandingPageFeatures = [
   },
   {
     icon: <Brain className="w-6 h-6 text-primary" />,
-    title: "AI Magic",
-    description: "Let the magic begin! Generate well-crafted paragraphs effortlessly with a click.",
-  },
-  {
-    icon: <Shield className="w-6 h-6 text-primary" />,
     title: "Smart Paraphrasing",
     description:
       "Instantly rephrase sentences for clarity and originality—perfect for avoiding repetition and boosting creativity.",
-  },
-  {
-    icon: <Sparkles className="w-6 h-6 text-primary" />,
-    title: "Creative Content Generation",
-    description:
-      "Generate fresh ideas and unique content for blogs, emails, and more—let your creativity flow with AI.",
-  },
-  {
-    icon: <Users className="w-6 h-6 text-primary" />,
-    title: "Tone & Style Adjustment",
-    description:
-      "Instantly adapt your writing’s tone—make it more formal, friendly, or persuasive with a single click.",
   },
 ];
 
