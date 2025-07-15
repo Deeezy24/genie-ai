@@ -53,7 +53,7 @@ export const genieTextSchema = z.object({
   summaryTone: z.enum(["Simple", "Detailed", "Bullet Points"]),
   summaryType: z.enum(["text", "file"]),
   inputText: z.string().trim().min(1, { message: "Text is required" }),
-  workspaceId: z.string(),
+  workspaceId: z.string().cuid(),
 });
 
 export type GenieTextTypes = z.infer<typeof genieTextSchema>;

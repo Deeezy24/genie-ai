@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
+import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Slider } from "@workspace/ui/components/slider";
 import { Textarea } from "@workspace/ui/components/textarea";
@@ -153,21 +154,23 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
 
       <Card className="w-full flex-3/5 shadow-none m-4 bg-neutral-900">
         <CardContent className="h-full flex flex-col gap-10">
-          <h2 className="text-lg font-bold">Summary</h2>
+          <ScrollArea className="h-[450px]">
+            <h2 className="text-lg font-bold">Summary</h2>
 
-          {isSubmitting ? (
-            <div className="flex flex-col justify-center items-center gap-2 min-h-96">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-              <p className="text-muted-foreground text-sm">Generating summary...</p>
-            </div>
-          ) : summary.length > 0 ? (
-            <div className="whitespace-pre-line">{displayedSummary}</div>
-          ) : (
-            <div className="flex flex-col justify-center items-center gap-2 min-h-96">
-              <Upload className="w-10 h-10 text-muted-foreground" />
-              <p className="text-muted-foreground text-sm">Your summary will appear here</p>
-            </div>
-          )}
+            {isSubmitting ? (
+              <div className="flex flex-col justify-center items-center gap-2 min-h-96">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                <p className="text-muted-foreground text-sm">Generating summary...</p>
+              </div>
+            ) : summary.length > 0 ? (
+              <div className="whitespace-pre-line">{displayedSummary}</div>
+            ) : (
+              <div className="flex flex-col justify-center items-center gap-2 min-h-96">
+                <Upload className="w-10 h-10 text-muted-foreground" />
+                <p className="text-muted-foreground text-sm">Your summary will appear here</p>
+              </div>
+            )}
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>

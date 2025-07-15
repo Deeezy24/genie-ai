@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import GeinieAgent from "@/components/GeineAgent/GeinieAgent";
+import GenieAgent from "@/components/GenieAgent/Genie";
 import { AGENT_TYPES } from "@/lib/constant";
 
 const page = async ({ params }: { params: Promise<{ workspace: string; agent: string }> }) => {
@@ -12,7 +12,7 @@ const page = async ({ params }: { params: Promise<{ workspace: string; agent: st
   const AgentToRender = () => {
     switch (agent) {
       case "genie":
-        return <GeinieAgent workspace={workspace} />;
+        return <GenieAgent workspace={workspace} />;
       default:
         return null;
     }

@@ -7,6 +7,7 @@ import { ClerkAuthGuard } from "./guard/auth/clerk-auth.guard";
 import { ClerkClientProvider } from "./providers/clerk/clerk-client.service";
 import { OpenAiClientProvider } from "./providers/openai/openai-client.service";
 import { PrismaClientProvider } from "./providers/prisma/prisma-client.service";
+import { AnthropicModule } from "./service/anthropic/anthropic.module";
 import { ClerkModule } from "./service/clerk/clerk.module";
 import { OpenAiModule } from "./service/openai/openai.module";
 import { PrismaModule } from "./service/prisma/prisma.module";
@@ -21,6 +22,7 @@ import { PrismaModule } from "./service/prisma/prisma.module";
     PrismaModule,
     ClerkModule,
     OpenAiModule,
+    AnthropicModule,
   ],
   providers: [
     ClerkClientProvider,

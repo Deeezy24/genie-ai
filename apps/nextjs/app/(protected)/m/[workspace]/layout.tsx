@@ -27,7 +27,7 @@ const ProtectedLayout = async ({
   }
 
   if (workspace !== sessionClaims.metadata.currentWorkspace) {
-    redirect(`/m/${sessionClaims.metadata.currentWorkspace}/dashboard`);
+    redirect(`/m/${sessionClaims.metadata.currentWorkspace}/overview`);
   }
 
   const user = await currentUser();
