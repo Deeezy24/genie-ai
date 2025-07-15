@@ -1,10 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
-import { CheckCircle } from "lucide-react";
+import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { ReactNode } from "react";
 
-type props = { icon: ReactNode; title: string; description: string; content: string[] };
+type props = { icon: ReactNode; title: string; description: string };
 
-const CardLandingPage = ({ icon, title, description, content }: props) => {
+const CardLandingPage = ({ icon, title, description }: props) => {
   return (
     <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
       <CardHeader>
@@ -12,16 +11,6 @@ const CardLandingPage = ({ icon, title, description, content }: props) => {
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        {content.map((item) => (
-          <ul key={item} className="space-y-2">
-            <li className="flex items-center text-sm">
-              <CheckCircle className="w-4 h-4 text-amber-400 mr-2" />
-              {item}
-            </li>
-          </ul>
-        ))}
-      </CardContent>
     </Card>
   );
 };
