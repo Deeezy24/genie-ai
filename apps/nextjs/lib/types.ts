@@ -49,3 +49,5 @@ export type User = {
   email: string;
   currentWorkspace: string;
 };
+
+export type GenieTypes = "text" | "file";

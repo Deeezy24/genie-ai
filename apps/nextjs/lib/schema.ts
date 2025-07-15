@@ -49,8 +49,9 @@ export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 
 //genie text schema
 export const genieTextSchema = z.object({
-  summaryMode: z.enum(["Simple", "Detailed", "Bullet Points"]),
   summaryLength: z.number().min(25).max(75),
+  summaryTone: z.enum(["Simple", "Detailed", "Bullet Points"]),
+  summaryType: z.enum(["text", "file"]),
   inputText: z.string().trim().min(1, { message: "Text is required" }),
   workspaceId: z.string(),
 });
