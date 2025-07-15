@@ -24,6 +24,7 @@ model workspace_member_table {
   user user_table @relation(fields: [workspace_member_user_id], references: [user_id])
  
   roles workspace_role_table[]
+  messages workspace_message_table[]
 
   @@index([workspace_member_workspace_id])
   @@map("workspace_member_table")
@@ -62,3 +63,31 @@ model workspace_role_permission_table {
   @@map("workspace_role_permission_table")
   @@schema("workspace_schema")
 }
+
+model workspace_message_table {
+  workspace_message_id     String   @id @default(cuid())
+  workspace_member_id      String   @db.Uuid  
+  workspace_message_content String
+  workspace_message_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  workspace_member  workspace_member_table  @relation(fields: [workspace_member_id], references: [workspace_member_id])
+  
+  agent_response workpace_agent_response_table?
+
+  @@map("workspace_message_table")
+  @@schema("workspace_schema")
+}
+
+model workpace_agent_response_table {
+  workspace_agent_response_id String @id @default(cuid())
+  workspace_agent     String
+  workspace_message_id String @unique
+  workspace_agent_response_content String
+  workspace_agent_response_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  message workspace_message_table @relation(fields: [workspace_message_id], references: [workspace_message_id])
+
+  @@map("workpace_agent_response_table")
+  @@schema("workspace_schema")
+}
+

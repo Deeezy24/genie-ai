@@ -69,7 +69,7 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
   };
 
   return (
-    <div className="flex gap-4 bg-muted rounded-md">
+    <div className="flex gap-4 bg-muted rounded-md p-4">
       <Card className="bg-muted w-full flex-3/5 shadow-none">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -140,7 +140,7 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
               />
 
               <div className="flex gap-3 mt-4 justify-end">
-                <Button onClick={() => form.reset()} variant="outline">
+                <Button type="button" onClick={() => form.reset()} variant="outline">
                   Clear
                 </Button>
                 <Button type="submit" disabled={!isValid || isSubmitting || isTyping}>
@@ -152,7 +152,7 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
         </Form>
       </Card>
 
-      <Card className="w-full flex-3/5 shadow-none m-4 bg-neutral-900">
+      <Card className="w-full flex-3/5 shadow-none m-4">
         <CardContent className="h-full flex flex-col gap-10">
           <ScrollArea className="h-[450px]">
             <h2 className="text-lg font-bold">Summary</h2>

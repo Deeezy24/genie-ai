@@ -5,6 +5,7 @@ declare global {
     metadata: {
       onboardingComplete?: boolean;
       currentWorkspace?: string;
+      memberId?: string;
     };
   }
   interface Window {

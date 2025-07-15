@@ -1,12 +1,12 @@
 import type { ClerkClient, User } from "@clerk/backend";
 import { Inject, Injectable } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "@/service/prisma/prisma.service";
 import { UserOnboardingDto } from "./dto/user.schema";
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject("PrismaClient") private readonly prisma: PrismaClient,
+    private readonly prisma: PrismaService,
     @Inject("ClerkClient") private readonly clerk: ClerkClient,
   ) {}
 
