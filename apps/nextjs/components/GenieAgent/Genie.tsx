@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/componen
 import { FileText, FileType, Headphones, Image, Link, Youtube } from "lucide-react";
 import TextTab from "./TabsContent/TextTab";
 
-const GeinieAgent = ({ workspace }: { workspace: string }) => {
+const GenieAgent = ({ workspace }: { workspace: string }) => {
   const tabs = [
     {
       value: "text",
@@ -69,4 +69,4 @@ const GeinieAgent = ({ workspace }: { workspace: string }) => {
   );
 };
 
-export default GeinieAgent;
+export default GenieAgent;
