@@ -50,4 +50,4 @@ export type User = {
   currentWorkspace: string;
 };
 
-export type GenieTypes = "text" | "file";
+export type GenieTypes = "text" | "file" | "url";

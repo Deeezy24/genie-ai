@@ -8,12 +8,12 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Slider } from "@workspace/ui/components/slider";
-import { Textarea } from "@workspace/ui/components/textarea";
 import { AxiosError } from "axios";
 import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import DropzoneComponent from "@/components/Reusable/Dropzone";
 import { GenieTextTypes, genieSummarySchema } from "@/lib/schema";
 import { GenieTypes } from "@/lib/types";
 import { summaryService } from "@/services/summary/summary-service";
@@ -31,7 +31,7 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
       summaryLength: 25,
       inputText: "",
       summaryTone: "Simple",
-      summaryType: "text",
+      summaryType: "file",
       workspaceId: workspace,
     },
   });
@@ -43,9 +43,18 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
   const onSubmit = async (data: GenieTextTypes) => {
     try {
       const token = await getToken();
+
+      const formData = new FormData();
+      formData.append("inputFile", data.inputFile as unknown as File);
+      formData.append("summaryType", data.summaryType);
+      formData.append("summaryTone", data.summaryTone);
+      formData.append("summaryLength", data.summaryLength.toString());
+      formData.append("workspaceId", data.workspaceId);
+
       const { data: summaryData } = await summaryService.createSummary({
         data,
         token,
+        formData,
       });
 
       setSummary(summaryData);
@@ -124,15 +133,11 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
 
               <FormField
                 control={form.control}
-                name="inputText"
+                name="inputFile"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea
-                        className="min-h-96 border-2 border-muted-foreground"
-                        placeholder="Describe what is the best way to summarize the given text"
-                        {...field}
-                      />
+                      <DropzoneComponent value={field.value as unknown as File} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

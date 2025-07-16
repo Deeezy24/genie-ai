@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@workspace/ui/components/form";
+import { Input } from "@workspace/ui/components/input";
 import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Slider } from "@workspace/ui/components/slider";
-import { Textarea } from "@workspace/ui/components/textarea";
 import { AxiosError } from "axios";
 import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
@@ -18,7 +18,7 @@ import { GenieTextTypes, genieSummarySchema } from "@/lib/schema";
 import { GenieTypes } from "@/lib/types";
 import { summaryService } from "@/services/summary/summary-service";
 
-const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) => {
+const UrlTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) => {
   const { getToken } = useAuth();
 
   const [summary, setSummary] = useState<string>("");
@@ -31,7 +31,7 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
       summaryLength: 25,
       inputText: "",
       summaryTone: "Simple",
-      summaryType: "text",
+      summaryType: "url",
       workspaceId: workspace,
     },
   });
@@ -124,13 +124,13 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
 
               <FormField
                 control={form.control}
-                name="inputText"
+                name="inputUrl"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea
-                        className="min-h-96 border-2 border-muted-foreground"
-                        placeholder="Describe what is the best way to summarize the given text"
+                      <Input
+                        className="border-2 border-muted-foreground"
+                        placeholder="Enter a URL to summarize"
                         {...field}
                       />
                     </FormControl>
@@ -177,4 +177,4 @@ const TextTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
   );
 };
 
-export default TextTab;
+export default UrlTab;

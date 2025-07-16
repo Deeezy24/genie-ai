@@ -48,12 +48,45 @@ export const changePasswordSchema = z
 export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 
 //genie text schema
-export const genieTextSchema = z.object({
-  summaryLength: z.number().min(25).max(75),
-  summaryTone: z.enum(["Simple", "Detailed", "Bullet Points"]),
-  summaryType: z.enum(["text", "file"]),
-  inputText: z.string().trim().min(1, { message: "Text is required" }),
-  workspaceId: z.string().cuid(),
-});
+const SummaryTone = z.enum(["Simple", "Detailed", "Bullet Points"]);
+const SummaryLength = z.number().min(25).max(75);
+const SummaryType = z.enum(["text", "url", "file", "audio", "image", "video"]);
 
-export type GenieTextTypes = z.infer<typeof genieTextSchema>;
+export const genieSummarySchema = z
+  .object({
+    summaryTone: SummaryTone,
+    summaryLength: SummaryLength,
+    summaryType: SummaryType,
+    inputText: z.string().optional(),
+    inputUrl: z.string().url().optional(),
+    inputFile: z.instanceof(File).optional(),
+    workspaceId: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    switch (data.summaryType) {
+      case "text":
+        if (!data.inputText || data.inputText.trim() === "") {
+          ctx.addIssue({
+            path: ["inputText"],
+            code: z.ZodIssueCode.custom,
+            message: "Text is required for text summary",
+          });
+        }
+        break;
+      case "url":
+        if (!data.inputUrl || data.inputUrl.trim() === "") {
+          ctx.addIssue({
+            path: ["inputUrl"],
+            code: z.ZodIssueCode.custom,
+            message: "URL is required for URL summary",
+          });
+        }
+        break;
+      case "file":
+      case "audio":
+      case "video":
+      case "image":
+        break;
+    }
+  });
+export type GenieTextTypes = z.infer<typeof genieSummarySchema>;

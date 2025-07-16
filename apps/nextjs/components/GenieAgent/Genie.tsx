@@ -1,7 +1,9 @@
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { FileText, FileType, Headphones, Image, Link, Youtube } from "lucide-react";
+import FileTab from "./TabsContent/FileTab";
 import TextTab from "./TabsContent/TextTab";
+import UrlTab from "./TabsContent/UrlTab";
 
 const GenieAgent = ({ workspace }: { workspace: string }) => {
   const tabs = [
@@ -15,13 +17,13 @@ const GenieAgent = ({ workspace }: { workspace: string }) => {
       value: "url",
       label: "URL",
       icon: <Link size={16} />,
-      content: <div>Enter a URL to summarize</div>,
+      content: <UrlTab workspace={workspace} type="url" />,
     },
     {
-      value: "pdf",
-      label: "PDF",
+      value: "file",
+      label: "File",
       icon: <FileType size={16} />,
-      content: <div>Upload a PDF document</div>,
+      content: <FileTab workspace={workspace} type="file" />,
     },
     {
       value: "audio",

@@ -1,4 +1,4 @@
-import { VersioningType } from "@nestjs/common";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -26,6 +26,7 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.register(contentParser as any);
 
   app.enableCors({
