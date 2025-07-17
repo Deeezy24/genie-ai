@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as cheerio from "cheerio";
-import * as pdfParse from "pdf-parse";
+import pdfParse from "pdf-parse";
 import { DEFAULT_MESSAGE } from "@/constants/app.constant";
 import { AnthropicService } from "@/service/anthropic/anthropic.service";
 import { OpenAIService } from "@/service/openai/openai.service";
@@ -22,20 +22,24 @@ export class ToolsService {
     return $("body").text().replace(/\s+/g, " ").trim();
   }
 
-  async extractTextFromPDF(filePath: string): Promise<string> {
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await (pdfParse as any).default(dataBuffer);
-    return data.text;
+  async extractTextFromBuffer(buffer: Buffer): Promise<string> {
+    try {
+      const data = await pdfParse(buffer);
+      return data.text;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to extract text from PDF buffer: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
-  async transcribeAudio(filePath: string): Promise<string> {
-    const fileStream = fs.createReadStream(filePath);
-    const result = await this.openaiService.transcribe(fileStream);
-    return result.text;
+  async transcribeAudio(file: Storage.MultipartFile): Promise<string> {
+    const result = await this.openaiService.transcribeAudio(file);
+    return result;
   }
 
-  async transcribeVideoAudio(filePath: string): Promise<string> {
-    return this.transcribeAudio(filePath);
+  async transcribeVideoAudio(file: Storage.MultipartFile): Promise<string> {
+    return this.transcribeAudio(file);
   }
 
   async summarizeText(

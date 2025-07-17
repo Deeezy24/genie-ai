@@ -18,7 +18,7 @@ import { GenieTextTypes, genieSummarySchema } from "@/lib/schema";
 import { GenieTypes } from "@/lib/types";
 import { summaryService } from "@/services/summary/summary-service";
 
-const FileTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) => {
+const AudioTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) => {
   const { getToken } = useAuth();
 
   const [summary, setSummary] = useState<string>("");
@@ -31,7 +31,7 @@ const FileTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
       summaryLength: 25,
       inputText: "",
       summaryTone: "Simple",
-      summaryType: "file",
+      summaryType: "audio",
       workspaceId: workspace,
     },
   });
@@ -84,7 +84,7 @@ const FileTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
             <CardHeader className="hidden">
               <CardTitle className="text-white flex items-center justify-between">Text</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 shadow-none">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold">{type.charAt(0).toUpperCase() + type.slice(1)}</h2>
                 <div className="flex items-center gap-4">
@@ -136,7 +136,11 @@ const FileTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <DropzoneComponent value={field.value as unknown as File} onChange={field.onChange} />
+                      <DropzoneComponent
+                        type="audio"
+                        value={field.value as unknown as File}
+                        onChange={field.onChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -181,4 +185,4 @@ const FileTab = ({ workspace, type }: { workspace: string; type: GenieTypes }) =
   );
 };
 
-export default FileTab;
+export default AudioTab;

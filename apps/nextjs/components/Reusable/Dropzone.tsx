@@ -8,9 +8,10 @@ import { useDropzone } from "react-dropzone";
 type DropzoneComponentProps = {
   value?: File;
   onChange?: (file: File | null) => void;
+  type?: "file" | "audio";
 };
 
-const DropzoneComponent = ({ onChange, value }: DropzoneComponentProps) => {
+const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponentProps) => {
   const [fileObj, setFileObj] = useState<{
     file: File;
     id: string;
@@ -69,15 +70,26 @@ const DropzoneComponent = ({ onChange, value }: DropzoneComponentProps) => {
     onChange?.(null);
   };
 
-  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
-    onDrop: (acceptedFiles, fileRejections) => onDrop(acceptedFiles, fileRejections as any),
-    accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
+  const getAcceptTypes = (type: "file" | "audio") => {
+    if (type === "audio") {
+      return {
+        "audio/*": [".mp3", ".m4a", ".wav", ".ogg", ".flac"],
+      };
+    }
+
+    // Default for "file"
+    return {
       "application/pdf": [".pdf"],
       "text/*": [".txt", ".csv"],
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
       "application/vnd.ms-excel": [".xls"],
-    },
+      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
+    };
+  };
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    onDrop: (acceptedFiles, fileRejections) => onDrop(acceptedFiles, fileRejections as any),
+    accept: getAcceptTypes(type) as any,
     maxSize: 10 * 1024 * 1024, // 10MB
     maxFiles: 1,
   });
@@ -93,6 +105,7 @@ const DropzoneComponent = ({ onChange, value }: DropzoneComponentProps) => {
   const getFileIcon = (fileType: string) => {
     if (fileType.startsWith("image/")) return "🖼️";
     if (fileType === "application/pdf") return "📄";
+    if (fileType === "audio/mpeg") return "🎤";
     if (fileType.startsWith("text/")) return "📝";
     if (fileType.includes("spreadsheet") || fileType.includes("excel")) return "📊";
     return "📁";
@@ -101,6 +114,7 @@ const DropzoneComponent = ({ onChange, value }: DropzoneComponentProps) => {
   const getFileTypeBadge = (fileType: string) => {
     if (fileType.startsWith("image/")) return { text: "Image", variant: "default" };
     if (fileType === "application/pdf") return { text: "PDF", variant: "destructive" };
+    if (fileType === "audio/mpeg") return { text: "Audio", variant: "secondary" };
     if (fileType.startsWith("text/")) return { text: "Text", variant: "secondary" };
     if (fileType.includes("spreadsheet") || fileType.includes("excel")) return { text: "Excel", variant: "outline" };
     return { text: "File", variant: "secondary" };
@@ -136,7 +150,9 @@ const DropzoneComponent = ({ onChange, value }: DropzoneComponentProps) => {
             ) : (
               <div className="text-muted-foreground">
                 <p className="text-lg font-medium">Drop a file here or click to browse</p>
-                <p className="text-sm mt-1">Supports: Images, PDF, Text, Excel (Max 10MB)</p>
+                <p className="text-sm mt-1">
+                  Supports:{type === "audio" ? ".mp3, .m4a, .wav, .ogg, .flac" : "Images, PDF, Text, Excel"} (Max 10MB)
+                </p>
               </div>
             )}
           </div>

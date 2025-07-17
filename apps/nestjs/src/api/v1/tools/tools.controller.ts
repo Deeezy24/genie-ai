@@ -11,7 +11,7 @@ export class ToolsController {
   constructor(private readonly toolsService: ToolsService) {}
 
   @Post("/summarize")
-  @UseInterceptors(MultipartInterceptor({ fileType: "*", maxFileSize: 1000_000 }))
+  @UseInterceptors(MultipartInterceptor({ fileType: "*", maxFileSize: 12 * 1024 * 1024 }))
   async summarize(
     @Body() dto: ToolsSummaryDto,
     @Req() req: types.FastifyRequestWithUser,
@@ -41,7 +41,7 @@ export class ToolsController {
           );
         }
         case "file": {
-          const pdfText = await this.toolsService.extractTextFromPDF(file?.filename || "");
+          const pdfText = await this.toolsService.extractTextFromBuffer(file?.buffer || Buffer.from(""));
           return await this.toolsService.summarizeText(pdfText, dto.summaryTone, SummaryLength[SummarySize], user);
         }
         case "audio": {
@@ -49,7 +49,7 @@ export class ToolsController {
             throw new Error("No Audio File");
           }
 
-          const audioText = await this.toolsService.transcribeAudio(file?.filename || "");
+          const audioText = await this.toolsService.transcribeAudio(file);
           return await this.toolsService.summarizeText(audioText, dto.summaryTone, SummaryLength[SummarySize], user);
         }
 
@@ -57,7 +57,7 @@ export class ToolsController {
           if (!file) {
             throw new Error("No audio/video file uploaded");
           }
-          const transcript = await this.toolsService.transcribeAudio(file?.filename || "");
+          const transcript = await this.toolsService.transcribeVideoAudio(file);
           return await this.toolsService.summarizeText(transcript, dto.summaryTone, SummaryLength[SummarySize], user);
         }
         case "image":

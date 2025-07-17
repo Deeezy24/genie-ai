@@ -1,6 +1,6 @@
+import { Readable } from "node:stream";
 import { Injectable } from "@nestjs/common";
-import { OpenAI } from "openai";
-import { Readable } from "stream";
+import { OpenAI, Uploadable } from "openai";
 
 @Injectable()
 export class OpenAIService {
@@ -13,6 +13,15 @@ export class OpenAIService {
       file: fileStream as any,
       model: "whisper-1",
     });
+  }
+
+  async transcribeAudio(file: Storage.MultipartFile): Promise<string> {
+    const result = await this.openai.audio.transcriptions.create({
+      file: file as unknown as Uploadable,
+      model: "gpt-4o-mini-transcribe",
+    });
+
+    return result.text;
   }
 
   async summarizeText(text: string, prompt: string) {

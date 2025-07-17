@@ -54,7 +54,7 @@ const envSchema = z.object({
     .optional(),
 });
 
-type EnvVars = z.infer<typeof envSchema>;
+export type EnvVars = z.infer<typeof envSchema>;
 
 /**
  * Build the runtime CORS origin value (boolean | '*' | string[])

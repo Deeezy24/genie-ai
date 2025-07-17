@@ -4,7 +4,7 @@ import { FileValidator } from "@nestjs/common/pipes/file/file-validator.interfac
 import { MultipartOptions } from "./types";
 
 export const getFileFromPart = async (part: MultipartFile): Promise<Storage.MultipartFile> => {
-  const buffer = await part.toBuffer(); // <-- $1;
+  const buffer = await part.toBuffer();
   return {
     buffer,
     size: buffer.byteLength,

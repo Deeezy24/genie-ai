@@ -1,6 +1,7 @@
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { FileText, FileType, Headphones, Image, Link, Youtube } from "lucide-react";
+import AudioTab from "./TabsContent/AudioTab";
 import FileTab from "./TabsContent/FileTab";
 import TextTab from "./TabsContent/TextTab";
 import UrlTab from "./TabsContent/UrlTab";
@@ -29,7 +30,7 @@ const GenieAgent = ({ workspace }: { workspace: string }) => {
       value: "audio",
       label: "Audio",
       icon: <Headphones size={16} />,
-      content: <div>Upload or record audio</div>,
+      content: <AudioTab workspace={workspace} type="audio" />,
     },
     {
       value: "youtube",
