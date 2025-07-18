@@ -1,10 +1,7 @@
 import { Separator } from "@workspace/ui/components/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { FileText, FileType, Headphones, Image, Link, Youtube } from "lucide-react";
-import AudioTab from "./TabsContent/AudioTab";
-import FileTab from "./TabsContent/FileTab";
-import TextTab from "./TabsContent/TextTab";
-import UrlTab from "./TabsContent/UrlTab";
+import GenieTabs from "./TabsContent/GeenieTabs";
 
 const GenieAgent = ({ workspace }: { workspace: string }) => {
   const tabs = [
@@ -12,37 +9,37 @@ const GenieAgent = ({ workspace }: { workspace: string }) => {
       value: "text",
       label: "Text",
       icon: <FileText size={16} />,
-      content: <TextTab workspace={workspace} type="text" />,
+      content: <GenieTabs workspace={workspace} type="text" />,
     },
     {
       value: "url",
       label: "URL",
       icon: <Link size={16} />,
-      content: <UrlTab workspace={workspace} type="url" />,
+      content: <GenieTabs workspace={workspace} type="url" />,
     },
     {
       value: "file",
       label: "File",
       icon: <FileType size={16} />,
-      content: <FileTab workspace={workspace} type="file" />,
+      content: <GenieTabs workspace={workspace} type="file" />,
     },
     {
       value: "audio",
       label: "Audio",
       icon: <Headphones size={16} />,
-      content: <AudioTab workspace={workspace} type="audio" />,
+      content: <GenieTabs workspace={workspace} type="audio" />,
     },
     {
       value: "youtube",
       label: "YouTube",
       icon: <Youtube size={16} />,
-      content: <div>Paste a YouTube video link</div>,
+      content: <GenieTabs workspace={workspace} type="video" />,
     },
     {
       value: "image",
       label: "Image",
       icon: <Image size={16} />,
-      content: <div>Upload an image to analyze</div>,
+      content: <GenieTabs workspace={workspace} type="image" />,
     },
   ];
 

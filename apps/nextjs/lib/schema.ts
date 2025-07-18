@@ -60,6 +60,9 @@ export const genieSummarySchema = z
     inputText: z.string().optional(),
     inputUrl: z.string().url().optional(),
     inputFile: z.instanceof(File).optional(),
+    inputTime: z.enum(["Specific Time", "Full Video"]).optional(),
+    startTimestamp: z.string().optional(),
+    endTimestamp: z.string().optional(),
     workspaceId: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -85,6 +88,16 @@ export const genieSummarySchema = z
       case "file":
       case "audio":
       case "video":
+        if (data.inputTime === "Specific Time") {
+          if (!data.inputTime || data.inputTime.trim() === "") {
+            ctx.addIssue({
+              path: ["inputTime"],
+              code: z.ZodIssueCode.custom,
+              message: "Time is required for video summary",
+            });
+          }
+        }
+        break;
       case "image":
         break;
     }

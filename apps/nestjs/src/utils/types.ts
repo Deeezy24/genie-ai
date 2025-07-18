@@ -7,3 +7,5 @@ export type MultipartOptions = {
   maxFileSize?: number;
   fileType?: string | RegExp;
 };
+
+export type FileType = "file" | "audio" | "image";

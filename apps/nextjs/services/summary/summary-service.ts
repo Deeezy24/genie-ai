@@ -9,4 +9,11 @@ export const summaryService = {
 
     return response;
   },
+  createSummaryFile: async (params: { data: GenieTextTypes | FormData; token: string | null }) => {
+    const { data, token } = params;
+
+    const response = await apiFetch<{ message: string; data: string }>("post", "/tools/summarize-file", data, token);
+
+    return response;
+  },
 };

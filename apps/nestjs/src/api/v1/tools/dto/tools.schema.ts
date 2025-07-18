@@ -12,6 +12,9 @@ const ToolsSchema = z
     summaryType: SummaryType,
     inputText: z.string().optional(),
     inputUrl: z.string().url().optional(),
+    selectTime: z.enum(["Specific Time", "Full Video"]).optional(),
+    startTimestamp: z.string().optional().default("00:00:00"),
+    endTimestamp: z.string().optional().default("00:00:00"),
     workspaceId: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -38,6 +41,13 @@ const ToolsSchema = z
       case "audio":
       case "image":
       case "video":
+        if (data.selectTime === "Specific Time" && (!data.startTimestamp || !data.endTimestamp)) {
+          ctx.addIssue({
+            path: ["startTimestamp", "endTimestamp"],
+            code: z.ZodIssueCode.custom,
+            message: "Start and end timestamps are required for specific time",
+          });
+        }
         break;
     }
   });

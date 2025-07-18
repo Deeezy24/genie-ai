@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@workspace/ui/componen
 import { AlertCircle, CheckCircle, Upload, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { FileType } from "@/lib/types";
 
 type DropzoneComponentProps = {
   value?: File;
   onChange?: (file: File | null) => void;
-  type?: "file" | "audio";
+  type?: FileType;
 };
 
 const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponentProps) => {
@@ -70,10 +71,15 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
     onChange?.(null);
   };
 
-  const getAcceptTypes = (type: "file" | "audio") => {
+  const getAcceptTypes = (type: FileType) => {
     if (type === "audio") {
       return {
         "audio/*": [".mp3", ".m4a", ".wav", ".ogg", ".flac"],
+      };
+    }
+    if (type === "image") {
+      return {
+        "image/*": [".png", ".jpg", ".jpeg", ".gif"],
       };
     }
 
@@ -121,7 +127,7 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
   };
 
   return (
-    <Card className="dark:bg-transparent">
+    <Card className="dark:bg-transparent shadow-none">
       <CardHeader className="hidden">
         <CardTitle className="text-center">File Upload</CardTitle>
       </CardHeader>
@@ -151,7 +157,13 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
               <div className="text-muted-foreground">
                 <p className="text-lg font-medium">Drop a file here or click to browse</p>
                 <p className="text-sm mt-1">
-                  Supports:{type === "audio" ? ".mp3, .m4a, .wav, .ogg, .flac" : "Images, PDF, Text, Excel"} (Max 10MB)
+                  Supports:
+                  {type === "audio"
+                    ? ".mp3, .m4a, .wav, .ogg, .flac"
+                    : type === "image"
+                      ? ".png, .jpg, .jpeg, .gif"
+                      : "PDF, Text, Excel"}
+                  (Max 10MB)
                 </p>
               </div>
             )}
