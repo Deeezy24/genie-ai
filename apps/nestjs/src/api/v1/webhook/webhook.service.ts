@@ -1,12 +1,13 @@
 import * as backend from "@clerk/backend";
 import { Inject, Injectable } from "@nestjs/common";
-import { PrismaClient, user_table } from "@prisma/client";
+import { user_table } from "@prisma/client";
+import { PrismaService } from "@/service/prisma/prisma.service";
 import { UserCreatedWebhook } from "./dto/webhook.schema";
 
 @Injectable()
 export class WebhookService {
   constructor(
-    @Inject("PrismaClient") private readonly prisma: PrismaClient,
+    private readonly prisma: PrismaService,
     @Inject("ClerkClient") private readonly clerk: backend.ClerkClient,
   ) {}
 

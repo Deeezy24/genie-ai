@@ -41,6 +41,7 @@ const ProtectedLayout = async ({
         imageUrl: user.imageUrl,
         email: user.emailAddresses?.[0]?.emailAddress ?? "",
         currentWorkspace: sessionClaims.metadata.currentWorkspace,
+        memberId: sessionClaims.metadata.memberId,
       }
     : null;
 
@@ -48,7 +49,7 @@ const ProtectedLayout = async ({
     <SidebarProvider defaultOpen={false}>
       <AppSidebar user={safeUser as unknown as User} variant="inset" collapsible="icon" />
       <SidebarInset className="flex flex-col">
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur supports-[backdrop-filter]:bg-neutral-950 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 rounded-t-xl">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 rounded-t-xl">
           <div className="flex w-full items-center justify-between px-4 lg:px-6">
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1 h-8 w-8" />
@@ -63,7 +64,7 @@ const ProtectedLayout = async ({
         </header>
 
         <section className="flex-1 overflow-auto">
-          <div className=" w-full p-4 md:p-6 lg:p-8 bg-neutral-950 max-w-8xl mx-auto">{children}</div>
+          <div className=" w-full p-4 md:p-6 lg:p-8 max-w-8xl mx-auto">{children}</div>
         </section>
       </SidebarInset>
     </SidebarProvider>

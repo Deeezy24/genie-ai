@@ -2,8 +2,8 @@ import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
 const SummaryTone = z.enum(["Simple", "Detailed", "Bullet Points"]);
-const SummaryLength = z.number().min(25).max(75);
-const SummaryType = z.enum(["text", "url", "pdf", "audio", "image", "video"]);
+const SummaryLength = z.coerce.number().min(25).max(75);
+const SummaryType = z.enum(["text", "url", "file", "audio", "image", "video"]);
 
 const ToolsSchema = z
   .object({
@@ -12,7 +12,9 @@ const ToolsSchema = z
     summaryType: SummaryType,
     inputText: z.string().optional(),
     inputUrl: z.string().url().optional(),
-    inputFile: z.string().optional(),
+    selectTime: z.enum(["Specific Time", "Full Video"]).optional(),
+    startTimestamp: z.string().optional().default("00:00:00"),
+    endTimestamp: z.string().optional().default("00:00:00"),
     workspaceId: z.string(),
   })
   .superRefine((data, ctx) => {
@@ -35,15 +37,15 @@ const ToolsSchema = z
           });
         }
         break;
-      case "pdf":
+      case "file":
       case "audio":
       case "image":
       case "video":
-        if (!data.inputFile || data.inputFile.trim() === "") {
+        if (data.selectTime === "Specific Time" && (!data.startTimestamp || !data.endTimestamp)) {
           ctx.addIssue({
-            path: ["inputFile"],
+            path: ["startTimestamp", "endTimestamp"],
             code: z.ZodIssueCode.custom,
-            message: `File is required for ${data.summaryType} summary`,
+            message: "Start and end timestamps are required for specific time",
           });
         }
         break;

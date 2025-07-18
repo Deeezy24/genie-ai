@@ -5,8 +5,6 @@ import { ZodValidationPipe } from "nestjs-zod";
 import { ApiModule } from "./api/api.module";
 import { ClerkAuthGuard } from "./guard/auth/clerk-auth.guard";
 import { ClerkClientProvider } from "./providers/clerk/clerk-client.service";
-import { OpenAiClientProvider } from "./providers/openai/openai-client.service";
-import { PrismaClientProvider } from "./providers/prisma/prisma-client.service";
 import { AnthropicModule } from "./service/anthropic/anthropic.module";
 import { ClerkModule } from "./service/clerk/clerk.module";
 import { OpenAiModule } from "./service/openai/openai.module";
@@ -23,11 +21,10 @@ import { PrismaModule } from "./service/prisma/prisma.module";
     ClerkModule,
     OpenAiModule,
     AnthropicModule,
+    PrismaModule,
   ],
   providers: [
     ClerkClientProvider,
-    PrismaClientProvider,
-    OpenAiClientProvider,
     {
       provide: APP_GUARD,
       useClass: ClerkAuthGuard,

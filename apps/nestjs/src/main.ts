@@ -1,10 +1,10 @@
-import { VersioningType } from "@nestjs/common";
+import multipart from "@fastify/multipart";
+import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { contentParser } from "fastify-file-interceptor";
 import { AppModule } from "./app.module";
-import { getConfig } from "./config/app/app.config";
+import { EnvVars, getConfig } from "./config/app/app.config";
 import { Environment } from "./constants/app.constant";
 import { consoleLoggingConfig } from "./tools/logger/logger-factory";
 
@@ -17,16 +17,19 @@ async function bootstrap() {
     test: false,
   } as const;
 
-  const appConfig = getConfig(process.env as any);
+  const appConfig = getConfig(process.env as unknown as EnvVars);
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
       logger: envToLogger[appConfig.nodeEnv],
+      bodyLimit: 12 * 1024 * 1024,
     }),
   );
 
-  await app.register(contentParser as any);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  await app.register(multipart); // 👈 this enables multipart/form-data support
 
   app.enableCors({
     origin: "http://localhost:3000",
