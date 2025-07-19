@@ -2,6 +2,18 @@ export const IS_PUBLIC_ROUTE = ["/sign-in(.*)", "/sign-up(.*)", "/", "/callback(
 export const IS_ONBOARDING_ROUTE = ["/onboarding(.*)"];
 export const IS_PROTECTED_ROUTE = ["/dashboard(.*)"];
 
+export const IS_ALLOWED_AUTHENTICATED_ROUTE = {
+  FREE: [
+    "/m/:workspace/overview",
+    "/m/:workspace/account/:rest*",
+    "/m/:workspace/tools/:rest*",
+    "/checkout",
+    "/payment",
+  ],
+  BASIC: ["/m/:workspace/overview", "/m/:workspace/account/*", "checkout"],
+  PRO: ["/m/:workspace/account/:rest*", "checkout"],
+};
+
 //style for dark and non dark
 export const NAV_BG = "bg-white dark:bg-zinc-800"; // common helpers
 export const TXT_PRIMARY = "text-gray-900 dark:text-white";

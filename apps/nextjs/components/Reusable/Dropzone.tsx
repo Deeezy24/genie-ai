@@ -20,6 +20,7 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
     progress: number;
   } | null>(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (value && !fileObj) {
       setFileObj({
@@ -31,6 +32,7 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
     }
   }, [value]);
 
+  //
   const onDrop = useCallback(
     (acceptedFiles: File[], rejectedFiles: File[]) => {
       const file = acceptedFiles[0];

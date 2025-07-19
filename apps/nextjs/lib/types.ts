@@ -21,6 +21,7 @@ export interface NavSubItem {
   icon?: LucideIcon;
   comingSoon?: boolean;
   newTab?: boolean;
+  plan: string[] | "free" | "basic" | "pro";
 }
 
 export type NavMainItem = {
@@ -30,6 +31,7 @@ export type NavMainItem = {
   subItems?: NavSubItem[];
   comingSoon?: boolean;
   newTab?: boolean;
+  plan: string[] | "free" | "basic" | "pro";
 };
 
 export type NavGroup = {
@@ -38,6 +40,7 @@ export type NavGroup = {
   icon?: LucideIcon;
   withSeparator?: boolean;
   items?: NavMainItem[];
+  plan: string[] | "free" | "basic" | "pro";
 };
 
 export type User = {
@@ -48,6 +51,14 @@ export type User = {
   imageUrl: string;
   email: string;
   currentWorkspace: string;
+  subscription: {
+    subscription_id: string;
+    subscription_plan: string;
+    subscription_status: string;
+    subscription_date_created: string;
+    subscription_date_updated: string;
+    subscription_date_trial_ends: number;
+  };
 };
 
 export type GenieTypes = "text" | "file" | "url" | "audio" | "video" | "image";

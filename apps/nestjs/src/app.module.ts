@@ -9,7 +9,6 @@ import { AnthropicModule } from "./service/anthropic/anthropic.module";
 import { ClerkModule } from "./service/clerk/clerk.module";
 import { OpenAiModule } from "./service/openai/openai.module";
 import { PrismaModule } from "./service/prisma/prisma.module";
-
 @Module({
   imports: [
     ConfigModule.forRoot({

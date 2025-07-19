@@ -1,12 +1,7 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { Separator } from "@workspace/ui/components/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar";
+import { auth } from "@clerk/nextjs/server";
+import { SidebarProvider } from "@workspace/ui/components/sidebar";
 import { redirect } from "next/navigation";
-import { AccountSwitcher } from "@/components/Layout/AppSideBar/AccountSwitcher";
-import { AppSidebar } from "@/components/Layout/AppSideBar/AppSideBar";
-import { Breadcrumbs } from "@/components/Layout/AppSideBar/BreadCrumbs";
-import { ThemeSwitcher } from "@/components/Layout/AppSideBar/ThemeSwitcher";
-import { User } from "@/lib/types";
+import SideBarInitializer from "@/components/Layout/AppSideBar/SideBarInitializer";
 
 const ProtectedLayout = async ({
   children,
@@ -30,43 +25,9 @@ const ProtectedLayout = async ({
     redirect(`/m/${sessionClaims.metadata.currentWorkspace}/overview`);
   }
 
-  const user = await currentUser();
-
-  const safeUser = user
-    ? {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        fullName: user.fullName,
-        imageUrl: user.imageUrl,
-        email: user.emailAddresses?.[0]?.emailAddress ?? "",
-        currentWorkspace: sessionClaims.metadata.currentWorkspace,
-        memberId: sessionClaims.metadata.memberId,
-      }
-    : null;
-
   return (
     <SidebarProvider defaultOpen={false}>
-      <AppSidebar user={safeUser as unknown as User} variant="inset" collapsible="icon" />
-      <SidebarInset className="flex flex-col">
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 rounded-t-xl">
-          <div className="flex w-full items-center justify-between px-4 lg:px-6">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="-ml-1 h-8 w-8" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumbs />
-            </div>
-            <div className="flex items-center gap-2">
-              <ThemeSwitcher />
-              <AccountSwitcher user={safeUser as unknown as User} />
-            </div>
-          </div>
-        </header>
-
-        <section className="flex-1 overflow-auto">
-          <div className=" w-full p-4 md:p-6 lg:p-8 max-w-8xl mx-auto">{children}</div>
-        </section>
-      </SidebarInset>
+      <SideBarInitializer>{children}</SideBarInitializer>
     </SidebarProvider>
   );
 };
