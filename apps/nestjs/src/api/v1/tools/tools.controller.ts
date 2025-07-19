@@ -1,7 +1,7 @@
-import { Body, Controller, Post, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
-import { FileFastifyInterceptor } from "fastify-file-interceptor";
-import { diskStorage } from "multer";
+import { Body, Controller, Post, Req, UseInterceptors } from "@nestjs/common";
 import { SummaryLength } from "@/constants/app.constant";
+import { Files } from "@/decorator/files/files.decorator";
+import { MultipartInterceptor } from "@/interceptor/file/file.interceptor";
 import * as types from "@/utils/types";
 import { ToolsSummaryDto } from "./dto/tools.schema";
 import { ToolsService } from "./tools.service";
@@ -11,52 +11,92 @@ export class ToolsController {
   constructor(private readonly toolsService: ToolsService) {}
 
   @Post("/summarize")
-  @UseInterceptors(
-    FileFastifyInterceptor("inputFile", {
-      storage: diskStorage({
-        destination: "./upload/single",
-      }),
-    }),
-  )
-  async summarize(@Body() dto: ToolsSummaryDto, @Req() req: types.FastifyRequestWithUser, @UploadedFile() file?: any) {
-    const SummarySize = dto.summaryLength as keyof typeof SummaryLength;
+  async summarize(@Body() dto: ToolsSummaryDto, @Req() req: types.FastifyRequestWithUser) {
+    try {
+      const SummarySize = dto.summaryLength as keyof typeof SummaryLength;
 
-    const user = req.user.publicMetadata.memberId as string;
+      const user = req.user.publicMetadata.memberId as string;
 
-    switch (dto.summaryType) {
-      case "text":
-        return await this.toolsService.summarizeText(
-          dto.inputText || "",
-          dto.summaryTone,
-          SummaryLength[SummarySize],
-          user,
-        );
-      case "url": {
-        const urlText = await this.toolsService.fetchAndCleanWebPage(dto.inputUrl || "");
-        return await this.toolsService.summarizeText(urlText || "", dto.summaryTone, SummaryLength[SummarySize], user);
-      }
-      case "pdf": {
-        if (!file?.path) {
-          throw new Error("No PDF file uploaded");
+      switch (dto.summaryType) {
+        case "text":
+          return await this.toolsService.summarizeText(
+            dto.inputText || "",
+            dto.summaryTone,
+            SummaryLength[SummarySize],
+            user,
+          );
+        case "url": {
+          const urlText = await this.toolsService.fetchAndCleanWebPage(dto.inputUrl || "");
+          return await this.toolsService.summarizeText(
+            urlText || "",
+            dto.summaryTone,
+            SummaryLength[SummarySize],
+            user,
+          );
         }
-        const pdfText = await this.toolsService.extractTextFromPDF(file.path);
-        return await this.toolsService.summarizeText(pdfText, dto.summaryTone, SummaryLength[SummarySize], user);
-      }
-      case "audio":
-      case "video": {
-        if (!file?.path) {
-          throw new Error("No audio/video file uploaded");
+        case "video": {
+          const videoText = await this.toolsService.summarizeYoutubeVideo(
+            dto.inputUrl || "",
+            dto.startTimestamp || "00:00:00",
+            dto.endTimestamp || "00:00:00",
+            dto.selectTime || "Full Video",
+          );
+
+          return await this.toolsService.summarizeText(videoText, dto.summaryTone, SummaryLength[SummarySize], user);
         }
-        const transcript = await this.toolsService.transcribeAudio(file.path);
-        return await this.toolsService.summarizeText(transcript, dto.summaryTone, SummaryLength[SummarySize], user);
+
+        default:
+          throw new Error("Unsupported summary type");
       }
-      case "image":
-        if (!file?.path) {
-          throw new Error("No image file uploaded");
+    } catch (error) {
+      console.log(error);
+      throw new Error(error as string);
+    }
+  }
+
+  @Post("/summarize-file")
+  @UseInterceptors(MultipartInterceptor({ fileType: "*", maxFileSize: 12 * 1024 * 1024 }))
+  async summarizeFile(
+    @Body() dto: ToolsSummaryDto,
+    @Req() req: types.FastifyRequestWithUser,
+    @Files() files: Record<string, Storage.MultipartFile[]>,
+  ) {
+    try {
+      const SummarySize = dto.summaryLength as keyof typeof SummaryLength;
+
+      const user = req.user.publicMetadata.memberId as string;
+      const file = files.inputFile?.[0];
+
+      switch (dto.summaryType) {
+        case "file": {
+          const pdfText = await this.toolsService.extractTextFromBuffer(file?.buffer || Buffer.from(""));
+          return await this.toolsService.summarizeText(pdfText, dto.summaryTone, SummaryLength[SummarySize], user);
         }
-        return await this.toolsService.summarizeImage(file.path, dto.summaryTone, SummaryLength[SummarySize], user);
-      default:
-        throw new Error("Unsupported summary type");
+        case "audio": {
+          if (!file) {
+            throw new Error("No Audio File");
+          }
+
+          const audioText = await this.toolsService.transcribeAudio(file);
+          return await this.toolsService.summarizeText(audioText, dto.summaryTone, SummaryLength[SummarySize], user);
+        }
+
+        case "image":
+          if (!file) {
+            throw new Error("No image file uploaded");
+          }
+          return await this.toolsService.summarizeImage(
+            file?.buffer || "",
+            dto.summaryTone,
+            SummaryLength[SummarySize],
+            user,
+          );
+        default:
+          throw new Error("Unsupported summary type");
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error(error as string);
     }
   }
 }

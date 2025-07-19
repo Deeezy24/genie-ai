@@ -1,11 +1,13 @@
-import * as fs from "node:fs";
-import { Injectable } from "@nestjs/common";
+import ytdl from "@distube/ytdl-core";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as cheerio from "cheerio";
-import * as pdfParse from "pdf-parse";
+import pdfParse from "pdf-parse";
+import { YoutubeTranscript } from "youtube-transcript";
 import { DEFAULT_MESSAGE } from "@/constants/app.constant";
 import { AnthropicService } from "@/service/anthropic/anthropic.service";
 import { OpenAIService } from "@/service/openai/openai.service";
 import { PrismaService } from "@/service/prisma/prisma.service";
+import { FFmpegService } from "@/utils/ffmpeg.service";
 
 @Injectable()
 export class ToolsService {
@@ -13,6 +15,7 @@ export class ToolsService {
     private readonly openaiService: OpenAIService,
     private readonly anthropicService: AnthropicService,
     private readonly prisma: PrismaService,
+    private readonly ffmpegService: FFmpegService,
   ) {}
 
   async fetchAndCleanWebPage(url: string): Promise<string> {
@@ -22,20 +25,111 @@ export class ToolsService {
     return $("body").text().replace(/\s+/g, " ").trim();
   }
 
-  async extractTextFromPDF(filePath: string): Promise<string> {
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await (pdfParse as any).default(dataBuffer);
-    return data.text;
+  async extractTextFromBuffer(buffer: Buffer): Promise<string> {
+    try {
+      const data = await pdfParse(buffer);
+      return data.text;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Failed to extract text from PDF buffer: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
-  async transcribeAudio(filePath: string): Promise<string> {
-    const fileStream = fs.createReadStream(filePath);
-    const result = await this.openaiService.transcribe(fileStream);
-    return result.text;
+  async transcribeAudio(file: Storage.MultipartFile): Promise<string> {
+    const result = await this.openaiService.transcribeAudio(file);
+    return result;
   }
 
-  async transcribeVideoAudio(filePath: string): Promise<string> {
-    return this.transcribeAudio(filePath);
+  async transcribeVideoAudio(file: Buffer): Promise<string> {
+    return await this.openaiService.transcribeAudio(file);
+  }
+
+  async getYoutubeTranscript(videoUrl: string, startTimeSec?: number, endTimeSec?: number): Promise<string> {
+    try {
+      const transcript = await YoutubeTranscript.fetchTranscript(videoUrl);
+
+      const transcriptText = transcript
+        .filter((item) => {
+          if (startTimeSec != null && endTimeSec != null) {
+            const timestampSec = item.offset / 1000;
+            return timestampSec >= startTimeSec && timestampSec <= endTimeSec;
+          }
+          return true;
+        })
+        .map((item) => item.text)
+        .join(" ");
+
+      return transcriptText;
+    } catch (error) {
+      console.error("Failed to fetch transcript:", error);
+      return "";
+    }
+  }
+
+  async downloadYoutubeAudioAsBuffer(url: string): Promise<Buffer> {
+    const audioStream = ytdl(url, {
+      quality: "highestaudio",
+      filter: "audioonly",
+      range: { start: 0, end: 0 },
+      requestOptions: {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+          Accept: "*/*",
+          "Accept-Language": "en-US,en;q=0.9",
+          Referer: "https://www.youtube.com/",
+          Origin: "https://www.youtube.com",
+          Connection: "keep-alive",
+        },
+      },
+    });
+
+    return await this.streamToBuffer(audioStream);
+  }
+
+  async summarizeYoutubeVideo(url: string, start: string, end: string, summaryType: string) {
+    const startTimeSec = this.timeStringToSeconds(start);
+    const endTimeSec = this.timeStringToSeconds(end);
+
+    let transcript = "";
+
+    if (!transcript) {
+      try {
+        const shouldTrim = summaryType === "Specific Time" && startTimeSec != null && endTimeSec != null;
+        console.log(startTimeSec, endTimeSec);
+        const finalAudioBuffer = shouldTrim
+          ? await this.downloadYoutubeAudioAsBufferWithTrim(url, startTimeSec, endTimeSec)
+          : await this.downloadYoutubeAudioAsBuffer(url);
+
+        transcript = await this.transcribeVideoAudio(finalAudioBuffer);
+      } catch (err) {
+        console.error("Audio download failed, fallback to transcript:", err);
+      }
+    }
+    return transcript;
+  }
+
+  async downloadYoutubeAudioAsBufferWithTrim(url: string, start: number, end: number): Promise<Buffer> {
+    const audioStream = ytdl(url, {
+      quality: "highestaudio",
+      filter: "audioonly",
+      requestOptions: {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
+          Accept: "*/*",
+          "Accept-Language": "en-US,en;q=0.9",
+          Referer: "https://www.youtube.com/",
+          Origin: "https://www.youtube.com",
+          Connection: "keep-alive",
+        },
+      },
+    });
+
+    const audioBuffer = await this.streamToBuffer(audioStream);
+
+    return await this.ffmpegService.trimAudioBuffer(audioBuffer, start, end);
   }
 
   async summarizeText(
@@ -76,13 +170,12 @@ export class ToolsService {
   }
 
   async summarizeImage(
-    filePath: string,
+    buffer: Buffer,
     tone: string,
     length: string,
     memberId: string,
   ): Promise<{ message: string; data: string }> {
-    const imageBuffer = fs.readFileSync(filePath);
-    const base64Image = imageBuffer.toString("base64");
+    const base64Image = buffer.toString("base64");
     const prompt = this.buildPrompt(tone, length, "image");
 
     if (process.env.NODE_ENV === "local") {
@@ -132,5 +225,18 @@ export class ToolsService {
 
   private buildPrompt(tone: string, length: string, type: string): string {
     return `Please summarize the following ${type} with a ${tone.toLowerCase()} tone. Make it ${length}.`;
+  }
+
+  private timeStringToSeconds(time: string): number {
+    const [hh = "0", mm = "0", ss = "0"] = time.split(":");
+    return +hh * 3600 + +mm * 60 + +ss;
+  }
+
+  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
   }
 }

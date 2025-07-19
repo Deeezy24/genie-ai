@@ -1,5 +1,3 @@
-// src/lib/apiFetch.ts
-
 import axios from "axios";
 import { parseAxiosError } from "./helper";
 
@@ -10,8 +8,7 @@ export const apiFetch = async <T = unknown>(
   token?: string | null,
 ) => {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
   try {
@@ -21,6 +18,7 @@ export const apiFetch = async <T = unknown>(
       data,
       headers,
     });
+
     return res.data;
   } catch (err) {
     throw parseAxiosError(err);

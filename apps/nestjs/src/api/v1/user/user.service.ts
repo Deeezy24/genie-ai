@@ -110,7 +110,7 @@ export class UserService {
             workspace_role_permission_permission: "DELETE",
           },
         ],
-        skipDuplicates: true, // optional safeguard
+        skipDuplicates: true,
       });
 
       return workspace.workspace_id;
