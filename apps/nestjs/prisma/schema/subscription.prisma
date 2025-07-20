@@ -5,6 +5,16 @@ enum SubscriptionStatus {
   @@schema("subscription_schema")
 }
 
+enum SubscriptionPaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+
+  @@schema("subscription_schema")
+}
+
 model subscription_table {
   subscription_id String @id @default(uuid()) @db.Uuid
   subscription_plan_id String @db.Uuid
@@ -16,8 +26,11 @@ model subscription_table {
   user_table user_table @relation(fields: [subscription_user_id], references: [user_id])
   subscription_plan_table subscription_plan_table @relation(fields: [subscription_plan_id], references: [subscription_plan_id])
 
-  @@index([subscription_user_id])
+  subscription_payment_table subscription_payment_table[]
+
   @@schema("subscription_schema")
+  @@index([subscription_user_id])
+  @@index([subscription_plan_id])
   @@map("subscription_table")
 }
 
@@ -27,11 +40,27 @@ model subscription_plan_table {
   subscription_plan_price Decimal @default(0)
   subscription_plan_currency String @default("PHP")
   subscription_plan_interval String @default("monthly")
+  subscription_plan_product_variant_id String
+  subscription_plan_product_store_id String
   subscription_plan_date_created DateTime @default(now()) @db.Timestamptz(3)
   subscription_plan_date_updated DateTime? @updatedAt @db.Timestamptz(3)
 
   subscription_table subscription_table[]
 
   @@map("subscription_plan_table")
+  @@schema("subscription_schema")
+}
+
+model subscription_payment_table {
+  subscription_payment_id String @id @default(uuid()) @db.Uuid
+  subscription_payment_status SubscriptionPaymentStatus @default(PENDING)
+  subscription_payment_amount Decimal @default(0)
+  subscription_payment_email String
+  subscription_payment_subscription_id String @db.Uuid
+  subscription_payment_date_created DateTime @default(now()) @db.Timestamptz(3)
+
+  subscription_table subscription_table @relation(fields: [subscription_payment_subscription_id], references: [subscription_id])
+
+  @@map("subscription_payment_table")
   @@schema("subscription_schema")
 }
