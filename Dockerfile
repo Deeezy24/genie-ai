@@ -48,5 +48,5 @@
 
     
     # Start the app
-    CMD ["pnpm", "start:nestjs"]
+    CMD ["pnpm", "start:${APP}"]
     
