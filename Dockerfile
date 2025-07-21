@@ -20,26 +20,21 @@
     # -----------------------------
     FROM base AS development
     
-    # Build ARG for selecting which app to build
-    ARG APP
     ENV NODE_ENV=development
-    ENV APP=${APP}
     
-    # Copy entire monorepo for build context
     COPY . .
     
     # Build the selected app
     RUN pnpm run db:generate
-    RUN pnpm run build:${APP}
+    RUN pnpm run build:nestjs
     
     # -----------------------------
     # Production Stage
     # -----------------------------
     FROM base AS production
     
-    ARG APP
     ENV NODE_ENV=production
-    ENV APP=${APP}
+    ENV APP=nestjs
     
     # Prune dev dependencies
     RUN pnpm install --prod
