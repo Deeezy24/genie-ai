@@ -6,22 +6,21 @@ import { useParams, useRouter } from "next/navigation";
 
 const tools = (workspace: string) => [
   {
-    title: "Genie AI",
-    description: "Get the gist of any content with one click!",
-    icon: "🎯",
+    title: "AI Summarizer",
+    description: "Instantly get the key points from any text. Your fast-track to understanding.",
+    icon: "✨",
     url: `/m/${workspace}/tools/genie`,
   },
   {
-    title: "Paragraph Writer",
-    description:
-      "Generate well-crafted paragraphs effortlessly with a click. Your go-to tool for seamless content creation!",
-    icon: "✍️",
+    title: "Paragraph Generator",
+    description: "Create perfectly structured paragraphs on any topic. Boost your writing productivity.",
+    icon: "🚀",
     url: `/m/${workspace}/tools/paragraph-writer`,
   },
   {
-    title: "Paraphraser",
-    description: "Let the magic begin! Generate well-crafted paragraphs effortlessly with a click. Your go-to tool...",
-    icon: "🔁",
+    title: "Content Rewriter",
+    description: "Rephrase and refresh your content to make it unique and engaging.",
+    icon: "🔄",
     url: `/m/${workspace}/tools/paraphraser`,
   },
 ];
@@ -45,7 +44,7 @@ const OverviewPage = () => {
         {tools(workspace).map((tool) => (
           <Card
             key={tool.title}
-            className="bg-[#1b1b1c] hover:bg-[#222] transition-colors border-none border-2"
+            className="transition-colors hover:bg-muted cursor-pointer"
             onClick={() => handleToolClick(tool.url)}
           >
             <CardHeader>
@@ -53,7 +52,7 @@ const OverviewPage = () => {
                 <div className="text-2xl">{tool.icon}</div>
                 <CardTitle>{tool.title}</CardTitle>
               </div>
-              <CardDescription className="text-gray-400">{tool.description}</CardDescription>
+              <CardDescription className="pt-2">{tool.description}</CardDescription>
             </CardHeader>
           </Card>
         ))}
