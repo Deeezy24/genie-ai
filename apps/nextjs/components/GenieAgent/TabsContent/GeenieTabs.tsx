@@ -11,7 +11,6 @@ import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Slider } from "@workspace/ui/components/slider";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { AxiosError } from "axios";
 import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -104,12 +103,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
           setIsTyping(false);
         }
       }, 20);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message);
-      } else {
-        toast.error("Something went wrong.");
-      }
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "An error occurred");
     }
   };
 

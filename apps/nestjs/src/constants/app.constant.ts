@@ -63,7 +63,8 @@ export const SummaryLength = {
 export const DEFAULT_MESSAGE =
   "In a quiet village nestled at the edge of an ancient forest, lived a little girl named Lila who was afraid of the dark. Every night, she would sleep with a lantern by her side, its dim light barely keeping the shadows away. One evening, during a power outage, Lila wandered outside searching for light. That’s when she saw it — a single glowing firefly dancing just beyond the trees. Curious and oddly comforted, she followed it deeper into the woods. The firefly led her to a hidden meadow, where thousands of fireflies lit up the night like stars. They swirled around her, warm and calm, chasing away her fear. In that moment, the darkness didn't feel empty — it felt alive. From that night on, Lila never feared the dark again. Instead, she welcomed it, hoping the fireflies would visit once more In a quiet village nestled at the edge of an ancient forest, lived a little girl named Lila who was afraid of the dark. Every night, she would sleep with a lantern by her side, its dim light barely keeping the shadows away. One evening, during a power outage, Lila wandered outside searching for light. That’s when she saw it — a single glowing firefly dancing just beyond the trees. Curious and oddly comforted, she followed it deeper into the woods. The firefly led her to a hidden meadow, where thousands of fireflies lit up the night like stars. They swirled around her, warm and calm, chasing away her fear. In that moment, the darkness didn't feel empty — it felt alive. From that night on, Lila never feared the dark again. Instead, she welcomed it, hoping the fireflies would visit once more.";
 
-export const API_REQUEST = {
-  FREE: 5,
-  BASIC: 50,
+export const AI_API_REQUEST = {
+  FREE: 10,
+  BASIC: 300,
+  PRO: 1000,
 };

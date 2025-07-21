@@ -36,7 +36,6 @@ export class UserController {
 
       return await this.userService.createOnboarding(createUserOnboardingDto, user);
     } catch (error) {
-      console.log(error);
       throw new BadRequestException(error);
     }
   }

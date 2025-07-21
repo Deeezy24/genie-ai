@@ -57,10 +57,23 @@ export type User = {
     subscription_status: string;
     subscription_date_created: string;
     subscription_date_updated: string;
-    subscription_date_trial_ends: number;
+    subscription_date_ends: number;
   };
 };
 
 export type GenieTypes = "text" | "file" | "url" | "audio" | "video" | "image";
 
 export type FileType = "file" | "audio" | "image";
+
+export type BillingHistory = {
+  subscription_payment_id: string;
+  subscription_payment_status: string;
+  subscription_payment_amount: number;
+  subscription_payment_email: string;
+  subscription_payment_order_id: string;
+  subscription_payment_receipt_url: string;
+  subscription_plan_name: string;
+  subscription_payment_date_created: string;
+  subscription_payment_date_updated: string;
+  subscription_payment_date_next_bill: string;
+};

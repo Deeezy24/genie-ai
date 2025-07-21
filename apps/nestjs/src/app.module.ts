@@ -9,6 +9,7 @@ import { AnthropicModule } from "./service/anthropic/anthropic.module";
 import { ClerkModule } from "./service/clerk/clerk.module";
 import { OpenAiModule } from "./service/openai/openai.module";
 import { PrismaModule } from "./service/prisma/prisma.module";
+import { RedisModule } from "./service/redis/redis.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,6 +22,7 @@ import { PrismaModule } from "./service/prisma/prisma.module";
     OpenAiModule,
     AnthropicModule,
     PrismaModule,
+    RedisModule,
   ],
   providers: [
     ClerkClientProvider,

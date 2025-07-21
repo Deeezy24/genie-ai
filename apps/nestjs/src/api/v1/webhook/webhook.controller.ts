@@ -1,6 +1,5 @@
-import { BadRequestException, Body, Controller, Post, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { Public } from "@/decorator/public/public.decorator";
-import { LemonSqueezyGuard } from "@/guard/lemon-squeezy/lemon-squeezy.guard";
 import type { SubscriptionCreatedWebhook, UserCreatedWebhook } from "./dto/webhook.schema";
 import { WebhookService } from "./webhook.service";
 
@@ -23,7 +22,6 @@ export class WebhookController {
   }
 
   @Public()
-  @UseGuards(LemonSqueezyGuard)
   @Post("/lemonsqueezy")
   async createSubscriptionWebhook(@Body() subscriptionCreatedWebhook: SubscriptionCreatedWebhook) {
     try {

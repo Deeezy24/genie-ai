@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { ClerkClient, User } from "@clerk/backend";
 import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "@/service/prisma/prisma.service";
@@ -42,9 +43,10 @@ export class UserService {
       subscription_status: userData?.subscription_table?.[0]?.subscription_status,
       subscription_date_created: userData?.subscription_table?.[0]?.subscription_date_created,
       subscription_date_updated: userData?.subscription_table?.[0]?.subscription_date_updated,
-      subscription_date_trial_ends: this.calculateTrialEndsAt(
-        userData?.subscription_table?.[0]?.subscription_date_created ?? new Date(),
-      ),
+      subscription_date_ends:
+        userData?.subscription_table?.[0]?.subscription_plan_table?.subscription_plan_name === "FREE"
+          ? this.calculateTrialEndsAt(userData?.subscription_table?.[0]?.subscription_date_created ?? new Date(), 5)
+          : this.calculateTrialEndsAt(userData?.subscription_table?.[0]?.subscription_date_created ?? new Date(), 30),
     };
 
     const formattedUserData = {
@@ -103,6 +105,9 @@ export class UserService {
           workspace_member_workspace_id: workspace.workspace_id,
           workspace_member_user_id: user.id,
         },
+        select: {
+          workspace_member_id: true,
+        },
       });
 
       await tx.workspace_role_table.create({
@@ -143,6 +148,7 @@ export class UserService {
         data: {
           subscription_user_id: user.id,
           subscription_status: "ACTIVE",
+          subscription_order_id: randomUUID(),
           subscription_plan_id: "0b46e811-e69d-4ca0-ae02-461e112e0c20",
         },
         include: {
@@ -150,7 +156,7 @@ export class UserService {
         },
       });
 
-      return { workspace: workspace.workspace_id, subscription: subscription };
+      return { workspace: workspace.workspace_id, subscription: subscription, member: member };
     });
 
     const subscriptionData = {
@@ -165,6 +171,7 @@ export class UserService {
       publicMetadata: {
         onboardingComplete: true,
         currentWorkspace: workspaceData.workspace,
+        memberId: workspaceData.member.workspace_member_id,
         subscription: subscriptionData,
       },
     });
@@ -175,11 +182,11 @@ export class UserService {
     };
   }
 
-  private calculateTrialEndsAt(subscriptionDateCreated: Date) {
+  private calculateTrialEndsAt(subscriptionDateCreated: Date, interval: number) {
     const subscriptionDate = new Date(subscriptionDateCreated);
 
     const trialEndsAt = new Date(subscriptionDate);
-    trialEndsAt.setDate(trialEndsAt.getDate() + 5);
+    trialEndsAt.setDate(trialEndsAt.getDate() + interval);
     trialEndsAt.setHours(0, 0, 0, 0);
 
     const now = new Date();

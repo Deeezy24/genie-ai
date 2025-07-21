@@ -9,9 +9,16 @@ export const IS_ALLOWED_AUTHENTICATED_ROUTE = {
     "/m/:workspace/tools/:rest*",
     "/checkout",
     "/payment",
+    "/pricing",
   ],
-  BASIC: ["/m/:workspace/overview", "/m/:workspace/account/*", "checkout"],
-  PRO: ["/m/:workspace/account/:rest*", "checkout"],
+  BASIC: [
+    "/m/:workspace/overview",
+    "/m/:workspace/account/:rest*",
+    "/m/:workspace/tools/:rest*",
+    "checkout",
+    "/pricing",
+  ],
+  PRO: ["/m/:workspace/account/:rest*", "checkout", "/pricing"],
 };
 
 //style for dark and non dark

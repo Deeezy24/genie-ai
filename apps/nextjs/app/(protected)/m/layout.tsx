@@ -3,15 +3,8 @@ import { SidebarProvider } from "@workspace/ui/components/sidebar";
 import { redirect } from "next/navigation";
 import SideBarInitializer from "@/components/Layout/AppSideBar/SideBarInitializer";
 
-const ProtectedLayout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ workspace: string }>;
-}) => {
+const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
   const { sessionClaims } = await auth();
-  const { workspace } = await params;
 
   if (!sessionClaims) {
     redirect("/sign-in");
@@ -19,10 +12,6 @@ const ProtectedLayout = async ({
 
   if (sessionClaims.metadata.onboardingComplete === false) {
     redirect("/onboarding");
-  }
-
-  if (workspace !== sessionClaims.metadata.currentWorkspace) {
-    redirect(`/m/${sessionClaims.metadata.currentWorkspace}/overview`);
   }
 
   return (

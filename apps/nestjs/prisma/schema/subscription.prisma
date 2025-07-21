@@ -11,6 +11,8 @@ enum SubscriptionPaymentStatus {
   FAILED
   CANCELLED
   REFUNDED
+  PAUSED
+  EXPIRED
 
   @@schema("subscription_schema")
 }
@@ -18,7 +20,9 @@ enum SubscriptionPaymentStatus {
 model subscription_table {
   subscription_id String @id @default(uuid()) @db.Uuid
   subscription_plan_id String @db.Uuid
+  subscription_order_id String @unique  
   subscription_status SubscriptionStatus @default(ACTIVE)
+
   subscription_date_created DateTime @default(now()) @db.Timestamptz(3)
   subscription_date_updated DateTime? @updatedAt @db.Timestamptz(3)
   subscription_user_id String
@@ -56,10 +60,14 @@ model subscription_payment_table {
   subscription_payment_status SubscriptionPaymentStatus @default(PENDING)
   subscription_payment_amount Decimal @default(0)
   subscription_payment_email String
-  subscription_payment_subscription_id String @db.Uuid
+  subscription_payment_order_id String
+  subscription_payment_receipt_url String?
+  
   subscription_payment_date_created DateTime @default(now()) @db.Timestamptz(3)
+  subscription_payment_date_updated DateTime? @updatedAt @db.Timestamptz(3)
+  subscription_payment_date_next_bill DateTime? @db.Timestamptz(3)
 
-  subscription_table subscription_table @relation(fields: [subscription_payment_subscription_id], references: [subscription_id])
+  subscription_table subscription_table @relation(fields: [subscription_payment_order_id], references: [subscription_order_id])
 
   @@map("subscription_payment_table")
   @@schema("subscription_schema")
