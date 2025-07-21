@@ -37,11 +37,12 @@
     
     # Prune dev dependencies
     RUN pnpm install --prod
+
+    RUN pnpm run db:generate
     
     COPY --from=development /usr/src/app/apps/nestjs/dist ./dist
-    COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
-    COPY --from=development /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
+    COPY --from=development /usr/src/app/apps/nestjs/prisma ./prisma
     
     # Start the app
     CMD ["pnpm", "start:nestjs"]
