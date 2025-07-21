@@ -34,14 +34,13 @@
     FROM base AS production
     
     ENV NODE_ENV=production
-    ENV APP=nestjs
     
     # Prune dev dependencies
     RUN pnpm install --prod
     
-    COPY --from=development /usr/src/app/apps/${APP}/dist ./dist
+    COPY --from=development /usr/src/app/apps/nestjs/dist ./dist
 
     
     # Start the app
-    CMD ["pnpm", "start:${APP}"]
+    CMD ["pnpm", "start:nestjs"]
     
