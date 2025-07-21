@@ -44,6 +44,9 @@
     # Prune dev dependencies
     RUN pnpm install --prod
     
+    COPY --from=development /usr/src/app/apps/${APP}/dist ./dist
+
+    
     # Start the app
-    CMD ["pnpm", "start"]
+    CMD ["pnpm", "start:nestjs"]
     
