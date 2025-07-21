@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "build:nestjs": "turbo run build --filter=nestjs",
+    "build:nestjs": "pnpm run --filter nestjs build",
     "clean:dist": "pnpm rimraf \"**/dist\" --glob",
     "clean:node_modules": "pnpm dlx rimraf \"**/node_modules\" --glob",
     "clean:turbo": "pnpm dlx rimraf \"**/.turbo\" --glob",

@@ -30,7 +30,7 @@
     
     # Build the selected app
     RUN pnpm run db:generate
-    RUN pnpm turbo run build --filter=${APP}
+    RUN pnpm run build:${APP}
     
     # -----------------------------
     # Production Stage
