@@ -39,6 +39,8 @@
     RUN pnpm install --prod
     
     COPY --from=development /usr/src/app/apps/nestjs/dist ./dist
+    COPY --from=development /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+    COPY --from=development /usr/src/app/node_modules/@prisma ./node_modules/@prisma
 
     
     # Start the app
