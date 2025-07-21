@@ -4,6 +4,6 @@ import * as fastify from "fastify";
 export const Files = createParamDecorator(
   async (_data: unknown, ctx: ExecutionContext): Promise<null | Record<string, Storage.MultipartFile[]>> => {
     const req = ctx.switchToHttp().getRequest() as fastify.FastifyRequest;
-    return req.storedFiles;
+    return req.storedFiles ?? null;
   },
 );

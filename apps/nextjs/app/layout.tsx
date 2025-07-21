@@ -12,8 +12,8 @@ const fontSans = Inter({
 
 export async function generateMetadata() {
   return generatePageMetadata({
-    title: "CoverGenie | AI Cover Generator",
-    description: "CoverGenie | AI Cover Generator",
+    title: "Genie - AI Agent",
+    description: "Genie - AI Agent",
   });
 }
 
@@ -28,6 +28,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
           strategy="beforeInteractive"
           crossOrigin="anonymous"
         />
+        <Script src="https://app.lemonsqueezy.com/js/lemon.js" strategy="afterInteractive" />
       </head>
 
       <body className={`${fontSans.variable} font-sans antialiased `}>

@@ -1,4 +1,3 @@
-import multipart from "@fastify/multipart";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
@@ -28,8 +27,6 @@ async function bootstrap() {
   );
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  await app.register(multipart); // 👈 this enables multipart/form-data support
 
   app.enableCors({
     origin: "http://localhost:3000",

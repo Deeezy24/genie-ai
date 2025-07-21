@@ -97,7 +97,7 @@ export class ToolsService {
     if (!transcript) {
       try {
         const shouldTrim = summaryType === "Specific Time" && startTimeSec != null && endTimeSec != null;
-        console.log(startTimeSec, endTimeSec);
+
         const finalAudioBuffer = shouldTrim
           ? await this.downloadYoutubeAudioAsBufferWithTrim(url, startTimeSec, endTimeSec)
           : await this.downloadYoutubeAudioAsBuffer(url);
@@ -163,6 +163,7 @@ export class ToolsService {
           await this.saveMessageResponse(text, openAiResult, memberId, "genie - text");
           return { message: "Summarized with OpenAI", data: openAiResult };
         } catch (openAiError) {
+          console.error("OpenAI failed to generate a summary:", openAiError);
           throw new Error("Both LLMs failed to generate a summary.");
         }
       }

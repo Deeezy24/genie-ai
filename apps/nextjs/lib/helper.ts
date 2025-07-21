@@ -1,5 +1,6 @@
 import type { AxiosError } from "axios";
 import axios from "axios";
+import { format } from "date-fns";
 import { NormalisedAxiosError } from "./types";
 
 export const parseAxiosError = (err: unknown): NormalisedAxiosError => {
@@ -24,4 +25,8 @@ export const parseAxiosError = (err: unknown): NormalisedAxiosError => {
     message: typeof err === "string" ? err : "Unknown error",
     raw: err,
   };
+};
+
+export const formatDate = (date: string) => {
+  return format(new Date(date), "dd MMM yyyy");
 };

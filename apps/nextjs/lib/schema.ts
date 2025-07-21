@@ -103,3 +103,14 @@ export const genieSummarySchema = z
     }
   });
 export type GenieTextTypes = z.infer<typeof genieSummarySchema>;
+
+export const checkOutSchema = z.object({
+  email: z.string().email(),
+  name: z.string(),
+  variantId: z.string(),
+  productName: z.string(),
+  planId: z.string(),
+  storeId: z.string(),
+});
+
+export type CheckOutSchema = z.infer<typeof checkOutSchema>;

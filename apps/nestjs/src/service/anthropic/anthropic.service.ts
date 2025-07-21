@@ -19,8 +19,6 @@ export class AnthropicService {
       ],
     });
 
-    console.log("response", response);
-
     return response.content[0]?.type ?? null;
   }
 
