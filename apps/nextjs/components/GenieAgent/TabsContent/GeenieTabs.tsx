@@ -110,8 +110,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
 
   const isInputTime = form.watch("inputTime");
   return (
-    <div className="flex gap-4 bg-muted rounded-md p-4">
-      <Card className="bg-muted w-full flex-3/5 shadow-none">
+    <div className="flex gap-4 rounded-md p-4">
+      <Card className="w-3/5 border-none shadow-none">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="hidden">
@@ -128,7 +128,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                       <FormItem>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="rounded-full px-4 py-1 dark:bg-neutral-900">
+                            <SelectTrigger className="rounded-full px-4 py-1">
                               <SelectValue placeholder="Select a summary mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -146,8 +146,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                     control={form.control}
                     name="summaryLength"
                     render={({ field }) => (
-                      <div className="flex items-center gap-2 bg-neutral-900 rounded-full px-4 py-1">
-                        <span className="text-sm font-medium text-white">Shorter</span>
+                      <div className="flex items-center gap-2 rounded-full border px-3 py-1">
+                        <span className="text-sm font-medium text-muted-foreground">Shorter</span>
                         <Slider
                           value={[field.value]}
                           onValueChange={(val) => field.onChange(val[0])}
@@ -156,14 +156,14 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                           step={25}
                           className="w-40"
                         />
-                        <span className="text-sm font-medium text-white">Longer</span>
+                        <span className="text-sm font-medium text-muted-foreground">Longer</span>
                       </div>
                     )}
                   />
                 </div>
               </div>
               {type === "video" && (
-                <div className="flex items-center gap-2 justify-between">
+                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
                   <FormField
                     control={form.control}
                     name="inputTime"
@@ -172,7 +172,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                         <FormLabel>Time</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="rounded-full px-4 py-1 dark:bg-neutral-900">
+                            <SelectTrigger className="rounded-full px-4 py-1">
                               <SelectValue placeholder="Select a summary mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -187,7 +187,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                   />
 
                   {isInputTime === "Specific Time" && (
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
                       <FormField
                         control={form.control}
                         name="startTimestamp"
@@ -195,7 +195,12 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                           <FormItem>
                             <FormLabel>Start Time</FormLabel>
                             <FormControl>
-                              <TimePicker date={field.value ? new Date(field.value) : null} onChange={field.onChange} />
+                              <div className="min-w-[120px] flex-1">
+                                <TimePicker
+                                  date={field.value ? new Date(field.value) : null}
+                                  onChange={field.onChange}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -209,7 +214,12 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                           <FormItem>
                             <FormLabel>End Time</FormLabel>
                             <FormControl>
-                              <TimePicker date={field.value ? new Date(field.value) : null} onChange={field.onChange} />
+                              <div className="min-w-[120px] flex-1">
+                                <TimePicker
+                                  date={field.value ? new Date(field.value) : null}
+                                  onChange={field.onChange}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -228,7 +238,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                     <FormItem>
                       <FormControl>
                         <Textarea
-                          className="min-h-96 border-2 border-muted-foreground"
+                          className="min-h-96 resize-none"
                           placeholder="Describe what is the best way to summarize the given text"
                           {...field}
                         />
@@ -244,11 +254,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input
-                          className="border-2 border-muted-foreground"
-                          placeholder="Enter a URL to summarize"
-                          {...field}
-                        />
+                        <Input placeholder="Enter a URL to summarize" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -290,13 +296,11 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                   name="inputUrl"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>YouTube Video URL</FormLabel>
                       <FormControl>
-                        <Input
-                          className="border-2 border-muted-foreground"
-                          placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                          {...field}
-                        />
+                        <Input placeholder="https://www.youtube.com/watch?v=example" {...field} />
                       </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">Paste a YouTube video URL to summarize.</p>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -333,10 +337,12 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
         </Form>
       </Card>
 
-      <Card className="w-full flex-3/5 shadow-none m-4">
-        <CardContent className="h-full flex flex-col gap-10">
+      <Card className="w-2/5 border-none shadow-none">
+        <CardHeader>
+          <CardTitle>Summary</CardTitle>
+        </CardHeader>
+        <CardContent className="h-full">
           <ScrollArea className="h-[450px]">
-            <h2 className="text-lg font-bold">Summary</h2>
             {isSubmitting ? (
               <div className="flex flex-col justify-center items-center gap-2 min-h-96">
                 <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />

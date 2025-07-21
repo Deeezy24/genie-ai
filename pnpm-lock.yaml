@@ -68,6 +68,9 @@ importers:
       react-day-picker:
         specifier: 9.8.0
         version: 9.8.0(react@19.1.0)
+      react-dropzone:
+        specifier: 14.3.8
+        version: 14.3.8(react@19.1.0)
       react-hook-form:
         specifier: 7.59.0
         version: 7.59.0(react@19.1.0)
