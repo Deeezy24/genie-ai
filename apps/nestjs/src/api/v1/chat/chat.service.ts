@@ -22,17 +22,21 @@ export class ChatService {
     const result = await this.prisma.$transaction(async (tx) => {
       const chatId = createChatDto.chatId || "";
 
+      const currentDate = new Date();
+
       if (this.test(chatId)) {
         const convo = await tx.workspace_conversation_table.createManyAndReturn({
           data: [
             {
               workspace_conversation_content: createChatDto.message,
               workspace_conversation_model_id: createChatDto.modelId,
+              workspace_conversation_created_at: currentDate,
               workspace_coversation_chat_id: chatId,
             },
             {
               workspace_conversation_content: response || "",
               workspace_conversation_model_id: createChatDto.modelId,
+              workspace_conversation_created_at: new Date(currentDate.getTime() + 1000), // +1 second
               workspace_coversation_chat_id: chatId,
               workspace_conversation_is_agent: true,
             },
@@ -64,10 +68,12 @@ export class ChatService {
                 {
                   workspace_conversation_content: createChatDto.message,
                   workspace_conversation_model_id: createChatDto.modelId,
+                  workspace_conversation_created_at: currentDate,
                 },
                 {
                   workspace_conversation_content: response || "",
                   workspace_conversation_model_id: createChatDto.modelId,
+                  workspace_conversation_created_at: new Date(currentDate.getTime() + 1000), // +1 second
                   workspace_conversation_is_agent: true,
                 },
               ],
