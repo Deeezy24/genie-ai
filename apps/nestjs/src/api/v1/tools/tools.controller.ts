@@ -19,20 +19,20 @@ export class ToolsController {
   async summarize(@Body() dto: ToolsSummaryDto, @Req() req: FastifyRequestWithUser) {
     const SummarySize = dto.summaryLength as keyof typeof SummaryLength;
     const userId = req.user.id;
-    const user = req.user.publicMetadata.memberId as string;
+    const memberId = req.user.publicMetadata.memberId as string;
     const key = `${userId}-AI-REQUEST`;
     const ttlSeconds = 30 * 24 * 60 * 60;
 
     try {
       switch (dto.summaryType) {
         case "text":
-          return this.summarizeTextType(dto, user, key, ttlSeconds, SummarySize);
+          return this.summarizeTextType(dto, memberId, key, ttlSeconds, SummarySize);
 
         case "url":
-          return this.summarizeUrlType(dto, user, key, ttlSeconds, SummarySize);
+          return this.summarizeUrlType(dto, memberId, key, ttlSeconds, SummarySize);
 
         case "video":
-          return this.summarizeVideoType(dto, user, key, ttlSeconds, SummarySize);
+          return this.summarizeVideoType(dto, memberId, key, ttlSeconds, SummarySize);
 
         default:
           throw new Error("Unsupported summary type");
@@ -78,17 +78,19 @@ export class ToolsController {
 
   private async summarizeTextType(
     dto: ToolsSummaryDto,
-    user: string,
+    memberId: string,
     key: string,
     ttlSeconds: number,
     SummarySize: keyof typeof SummaryLength,
   ) {
-    const result = await this.toolsService.summarizeText(
-      dto.inputText || "",
-      dto.summaryTone,
-      SummaryLength[SummarySize],
-      user,
-    );
+    const result = await this.toolsService.summarizeText({
+      text: dto.inputText || "",
+      tone: dto.summaryTone,
+      length: SummaryLength[SummarySize],
+      chatId: dto.chatId,
+      memberId: memberId,
+      modelId: dto.modelId || "",
+    });
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;
   }
@@ -101,7 +103,14 @@ export class ToolsController {
     SummarySize: keyof typeof SummaryLength,
   ) {
     const urlText = await this.toolsService.fetchAndCleanWebPage(dto.inputUrl || "");
-    const result = await this.toolsService.summarizeText(urlText, dto.summaryTone, SummaryLength[SummarySize], user);
+    const result = await this.toolsService.summarizeText({
+      text: urlText,
+      tone: dto.summaryTone,
+      length: SummaryLength[SummarySize],
+      chatId: dto.chatId,
+      memberId: user,
+      modelId: dto.modelId || "",
+    });
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;
   }
@@ -119,7 +128,14 @@ export class ToolsController {
       dto.endTimestamp || "00:00:00",
       dto.selectTime || "Full Video",
     );
-    const result = await this.toolsService.summarizeText(videoText, dto.summaryTone, SummaryLength[SummarySize], user);
+    const result = await this.toolsService.summarizeText({
+      text: videoText,
+      tone: dto.summaryTone,
+      length: SummaryLength[SummarySize],
+      chatId: dto.chatId,
+      memberId: user,
+      modelId: dto.modelId || "",
+    });
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;
   }
@@ -133,7 +149,14 @@ export class ToolsController {
     SummarySize: keyof typeof SummaryLength,
   ) {
     const pdfText = await this.toolsService.extractTextFromBuffer(file?.buffer || Buffer.from(""));
-    const result = await this.toolsService.summarizeText(pdfText, dto.summaryTone, SummaryLength[SummarySize], user);
+    const result = await this.toolsService.summarizeText({
+      text: pdfText,
+      tone: dto.summaryTone,
+      length: SummaryLength[SummarySize],
+      chatId: dto.chatId,
+      memberId: user,
+      modelId: dto.modelId || "",
+    });
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;
   }
@@ -148,7 +171,14 @@ export class ToolsController {
   ) {
     if (!file) throw new Error("No Audio File");
     const audioText = await this.toolsService.transcribeAudio(file);
-    const result = await this.toolsService.summarizeText(audioText, dto.summaryTone, SummaryLength[SummarySize], user);
+    const result = await this.toolsService.summarizeText({
+      text: audioText,
+      tone: dto.summaryTone,
+      length: SummaryLength[SummarySize],
+      chatId: dto.chatId,
+      memberId: user,
+      modelId: dto.modelId || "",
+    });
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;
   }
@@ -156,7 +186,7 @@ export class ToolsController {
   private async summarizeImageType(
     file: Storage.MultipartFile | undefined,
     dto: ToolsSummaryDto,
-    user: string,
+    memberId: string,
     key: string,
     ttlSeconds: number,
     SummarySize: keyof typeof SummaryLength,
@@ -166,7 +196,8 @@ export class ToolsController {
       file.buffer,
       dto.summaryTone,
       SummaryLength[SummarySize],
-      user,
+      memberId,
+      dto.chatId,
     );
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;

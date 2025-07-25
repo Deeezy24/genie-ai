@@ -1,7 +1,6 @@
 // src/types/global.d.ts
 
 import { FastifyRequest } from "fastify";
-import { User } from "./your-user-type-path"; // adjust path to your actual User type
 
 declare global {
   export type FastifyRequestWithUser = FastifyRequest & { user: User };

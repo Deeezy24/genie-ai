@@ -11,7 +11,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
   const { session } = useSession();
 
-  const hasRefreshedSession = useRef(false); // ✅ prevents infinite loop
+  const hasRefreshedSession = useRef(false);
 
   const { data: user, isLoading } = useQuery<User>({
     queryKey: ["user-info"],

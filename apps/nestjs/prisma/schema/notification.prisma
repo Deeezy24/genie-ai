@@ -1,0 +1,33 @@
+enum notificationType {
+    subscription
+    payment
+    other
+
+    @@schema("notification_schema")
+}
+
+model notification_table {
+  notification_id String   @id @default(uuid())
+  notification_user_id String 
+  notification_message String
+  notification_subject String
+  notification_type String
+  notification_cta String?
+  notification_read Boolean @default(false)
+  notification_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  user_table user_table @relation(fields: [notification_user_id], references: [user_id])
+  @@schema("notification_schema")
+}
+
+model notification_count_table {
+  notification_user_id String
+  notification_count_unread Int @default(0)
+  notification_count_updated_at DateTime @updatedAt  
+
+  user_table user_table @relation(fields: [notification_user_id], references: [user_id])
+
+  @@id([notification_user_id])
+  @@unique([notification_user_id])
+  @@schema("notification_schema")
+}

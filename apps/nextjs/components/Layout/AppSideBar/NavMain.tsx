@@ -47,7 +47,7 @@ const NavItemExpanded = ({
 }) => {
   return (
     <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
-      <SidebarMenuItem>
+      <SidebarMenuItem className="relative">
         <CollapsibleTrigger asChild>
           {item.subItems ? (
             <SidebarMenuButton
@@ -69,6 +69,11 @@ const NavItemExpanded = ({
             >
               <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon />}
+                {item.count !== undefined && item.count > 0 && (
+                  <div className="absolute -top-1 -right-1 text-[10px] px-1.5 bg-red-500 text-white rounded-full">
+                    {item.count}
+                  </div>
+                )}
                 <span>{item.title}</span>
                 {item.comingSoon && <IsComingSoon />}
               </Link>
@@ -125,6 +130,11 @@ const NavItemCollapsed = ({
             onClick={handleClick}
           >
             {item.icon && <item.icon />}
+            {item.count !== undefined && item.count > 0 && (
+              <div className="absolute -top-1 -right-1 text-[10px] px-1.5 bg-red-500 text-white rounded-full">
+                {item.count}
+              </div>
+            )}
             <span>{item.title}</span>
             <ChevronRight />
           </SidebarMenuButton>
@@ -161,6 +171,7 @@ const NavItemCollapsed = ({
 
 export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
+  const router = useRouter();
   const { state, isMobile } = useSidebar();
 
   const queryClient = useQueryClient();
@@ -187,10 +198,11 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuItem className="flex items-center gap-2">
               <SidebarMenuButton
                 tooltip="Quick Create"
+                onClick={() => router.push(`/m/${user?.currentWorkspace}/tools/genie`)}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
               >
                 <PlusCircleIcon />
-                <span>Quick Upload</span>
+                <span>Quick Summary</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

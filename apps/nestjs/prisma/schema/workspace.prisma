@@ -1,4 +1,10 @@
 
+enum ChatType {
+  SUMMARIZER
+  CHAT
+  @@schema("workspace_schema")
+}
+
 model workspace_table {
   workspace_id           String   @id @default(cuid())       
   workspace_name         String
@@ -24,7 +30,7 @@ model workspace_member_table {
   user user_table @relation(fields: [workspace_member_user_id], references: [user_id])
  
   roles workspace_role_table[]
-  messages workspace_message_table[]
+  chats workspace_chat_table[]
 
   @@index([workspace_member_workspace_id])
   @@map("workspace_member_table")
@@ -64,30 +70,39 @@ model workspace_role_permission_table {
   @@schema("workspace_schema")
 }
 
-model workspace_message_table {
-  workspace_message_id     String   @id @default(cuid())
-  workspace_member_id      String   @db.Uuid  
-  workspace_message_content String
-  workspace_message_created_at DateTime @default(now()) @db.Timestamptz(3)
 
-  workspace_member  workspace_member_table  @relation(fields: [workspace_member_id], references: [workspace_member_id])
-  
-  agent_response workpace_agent_response_table?
+model workspace_chat_table {
+  workspace_chat_id     String   @id @default(uuid())
 
-  @@map("workspace_message_table")
+  workspace_chat_type ChatType
+  workspace_chat_title String
+  workspace_chat_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  workspace_chat_member_id String @db.Uuid
+  workspace_member  workspace_member_table  @relation(fields: [workspace_chat_member_id], references: [workspace_member_id])
+
+  workspace_conversation workspace_conversation_table[]
+
+
+  @@map("workspace_chat_table")
   @@schema("workspace_schema")
 }
 
-model workpace_agent_response_table {
-  workspace_agent_response_id String @id @default(cuid())
-  workspace_agent     String
-  workspace_message_id String @unique
-  workspace_agent_response_content String
-  workspace_agent_response_created_at DateTime @default(now()) @db.Timestamptz(3)
+model workspace_conversation_table {
+  workspace_conversation_id String @id @default(uuid())
+  workspace_conversation_content String
+  workspace_conversation_model_id String @db.Uuid
+  workspace_conversation_created_at DateTime @default(now()) @db.Timestamptz(3)
+  workspace_conversation_updated_at DateTime @updatedAt @db.Timestamptz(3)
+  workspace_conversation_is_agent Boolean @default(false)
+  workspace_coversation_chat_id String
 
-  message workspace_message_table @relation(fields: [workspace_message_id], references: [workspace_message_id])
+  workspace_chat workspace_chat_table @relation(fields: [workspace_coversation_chat_id], references: [workspace_chat_id])
 
-  @@map("workpace_agent_response_table")
+  workspace_model agent_model_table @relation(fields: [workspace_conversation_model_id], references: [agent_model_id])
+
+  
+  @@map("workspace_conversation_table")
   @@schema("workspace_schema")
 }
 

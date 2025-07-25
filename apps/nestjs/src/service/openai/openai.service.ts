@@ -78,4 +78,20 @@ export class OpenAIService {
 
     return result.choices[0]?.message.content;
   }
+
+  async askChatGPT(text: string, prompt: string, model: string) {
+    const result = await this.openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            { type: "text", text: text },
+          ],
+        },
+      ],
+    });
+    return result.choices[0]?.message.content;
+  }
 }
