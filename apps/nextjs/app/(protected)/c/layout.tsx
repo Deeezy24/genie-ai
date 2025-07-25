@@ -1,0 +1,28 @@
+import { Separator } from "@workspace/ui/components/separator";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@workspace/ui/components/sidebar";
+import { AccountSwitcher } from "@/components/Layout/AppSideBar/AccountSwitcher";
+import { ChatSidebar } from "@/components/Layout/ChatSideBar/ChatSideBar";
+
+const ChatLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SidebarProvider>
+      <ChatSidebar variant="inset" collapsible="icon" />
+      <SidebarInset className="flex flex-col">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 rounded-t-xl">
+          <div className="flex w-full items-center justify-between px-4 lg:px-6">
+            <div className="flex items-center gap-2">
+              <SidebarTrigger className="-ml-1 h-8 w-8" />
+              <Separator orientation="vertical" className="mr-2 h-4" />
+            </div>
+            <div className="flex items-center gap-2">
+              <AccountSwitcher />
+            </div>
+          </div>
+        </header>
+        <section className="flex-1 overflow-auto">{children}</section>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+};
+
+export default ChatLayout;

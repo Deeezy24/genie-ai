@@ -13,14 +13,11 @@ import {
 import { getInitials } from "@workspace/ui/lib/utils";
 import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
 import { useRouter } from "nextjs-toploader/app";
-import { User } from "@/lib/types";
+import useUserHook from "@/hooks/useUserHook";
 
-type Props = {
-  user: User;
-};
-
-export function AccountSwitcher({ user }: Props) {
+export function AccountSwitcher() {
   const { signOut } = useClerk();
+  const user = useUserHook();
   const router = useRouter();
 
   const handleSignOut = async () => {

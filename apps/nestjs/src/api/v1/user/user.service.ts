@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { ClerkClient, User } from "@clerk/backend";
 import { Inject, Injectable } from "@nestjs/common";
 import { PrismaService } from "@/service/prisma/prisma.service";
@@ -14,6 +15,19 @@ export class UserService {
     const userData = await this.prisma.user_table.findUnique({
       where: { user_id: user.id },
       include: {
+        subscription_table: {
+          take: 1,
+          orderBy: {
+            subscription_date_created: "desc",
+          },
+          include: {
+            subscription_plan_table: {
+              select: {
+                subscription_plan_name: true,
+              },
+            },
+          },
+        },
         workspace_member_table: {
           include: {
             roles: true,
@@ -23,13 +37,28 @@ export class UserService {
       },
     });
 
+    const subscriptionData = {
+      subscription_id: userData?.subscription_table?.[0]?.subscription_id,
+      subscription_plan: userData?.subscription_table?.[0]?.subscription_plan_table?.subscription_plan_name,
+      subscription_status: userData?.subscription_table?.[0]?.subscription_status,
+      subscription_date_created: userData?.subscription_table?.[0]?.subscription_date_created,
+      subscription_date_updated: userData?.subscription_table?.[0]?.subscription_date_updated,
+      subscription_date_ends:
+        userData?.subscription_table?.[0]?.subscription_plan_table?.subscription_plan_name === "FREE"
+          ? this.calculateTrialEndsAt(userData?.subscription_table?.[0]?.subscription_date_created ?? new Date(), 5)
+          : this.calculateTrialEndsAt(userData?.subscription_table?.[0]?.subscription_date_created ?? new Date(), 30),
+    };
+
     const formattedUserData = {
-      user_id: userData?.user_id,
-      email: userData?.email,
-      first_name: userData?.first_name,
-      last_name: userData?.last_name,
-      workspace_member_table: userData?.workspace_member_table,
-      workspace: userData?.workspace_member_table?.[0]?.workspace,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      fullName: user.fullName,
+      imageUrl: user.imageUrl,
+      email: user.emailAddresses?.[0]?.emailAddress ?? "",
+      currentWorkspace: userData?.workspace_member_table?.[0]?.workspace?.workspace_id,
+      memberId: userData?.workspace_member_table?.[0]?.workspace_member_id,
+      subscription: subscriptionData,
     };
 
     return formattedUserData;
@@ -76,6 +105,9 @@ export class UserService {
           workspace_member_workspace_id: workspace.workspace_id,
           workspace_member_user_id: user.id,
         },
+        select: {
+          workspace_member_id: true,
+        },
       });
 
       await tx.workspace_role_table.create({
@@ -86,7 +118,6 @@ export class UserService {
         },
       });
 
-      // Then create permissions
       await tx.workspace_role_permission_table.createMany({
         data: [
           {
@@ -113,19 +144,55 @@ export class UserService {
         skipDuplicates: true,
       });
 
-      return workspace.workspace_id;
+      const subscription = await tx.subscription_table.create({
+        data: {
+          subscription_user_id: user.id,
+          subscription_status: "ACTIVE",
+          subscription_order_id: randomUUID(),
+          subscription_plan_id: "0b46e811-e69d-4ca0-ae02-461e112e0c20",
+        },
+        include: {
+          subscription_plan_table: true,
+        },
+      });
+
+      return { workspace: workspace.workspace_id, subscription: subscription, member: member };
     });
+
+    const subscriptionData = {
+      subscription_id: workspaceData.subscription.subscription_id,
+      subscription_plan: workspaceData.subscription.subscription_plan_table.subscription_plan_name,
+      subscription_status: workspaceData.subscription.subscription_status,
+      subscription_date_created: workspaceData.subscription.subscription_date_created,
+      subscription_date_updated: workspaceData.subscription.subscription_date_updated,
+    };
 
     await this.clerk.users.updateUserMetadata(user.id, {
       publicMetadata: {
         onboardingComplete: true,
-        currentWorkspace: workspaceData,
+        currentWorkspace: workspaceData.workspace,
+        memberId: workspaceData.member.workspace_member_id,
+        subscription: subscriptionData,
       },
     });
 
     return {
-      workspace: workspaceData,
+      workspace: workspaceData.workspace,
       message: "Onboarding created successfully",
     };
+  }
+
+  private calculateTrialEndsAt(subscriptionDateCreated: Date, interval: number) {
+    const subscriptionDate = new Date(subscriptionDateCreated);
+
+    const trialEndsAt = new Date(subscriptionDate);
+    trialEndsAt.setDate(trialEndsAt.getDate() + interval);
+    trialEndsAt.setHours(0, 0, 0, 0);
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const diff = trialEndsAt.getTime() - now.getTime();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   }
 }

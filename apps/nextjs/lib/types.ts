@@ -20,7 +20,9 @@ export interface NavSubItem {
   url: string;
   icon?: LucideIcon;
   comingSoon?: boolean;
+  id: string;
   newTab?: boolean;
+  plan: string[] | "free" | "basic" | "pro";
 }
 
 export type NavMainItem = {
@@ -28,8 +30,11 @@ export type NavMainItem = {
   url: string;
   icon?: LucideIcon;
   subItems?: NavSubItem[];
+  count?: number;
   comingSoon?: boolean;
+  id: string | number;
   newTab?: boolean;
+  plan: string[] | "free" | "basic" | "pro";
 };
 
 export type NavGroup = {
@@ -38,6 +43,7 @@ export type NavGroup = {
   icon?: LucideIcon;
   withSeparator?: boolean;
   items?: NavMainItem[];
+  plan: string[] | "free" | "basic" | "pro";
 };
 
 export type User = {
@@ -48,8 +54,51 @@ export type User = {
   imageUrl: string;
   email: string;
   currentWorkspace: string;
+  subscription: {
+    subscription_id: string;
+    subscription_plan: string;
+    subscription_status: string;
+    subscription_date_created: string;
+    subscription_date_updated: string;
+    subscription_date_ends: number;
+  };
 };
 
 export type GenieTypes = "text" | "file" | "url" | "audio" | "video" | "image";
 
 export type FileType = "file" | "audio" | "image";
+
+export type BillingHistory = {
+  subscription_payment_id: string;
+  subscription_payment_status: string;
+  subscription_payment_amount: number;
+  subscription_payment_email: string;
+  subscription_payment_order_id: string;
+  subscription_payment_receipt_url: string;
+  subscription_plan_name: string;
+  subscription_payment_date_created: string;
+  subscription_payment_date_updated: string;
+  subscription_payment_date_next_bill: string;
+};
+
+export type Notification = {
+  notification_id: string;
+  notification_message: string;
+  notification_subject: string;
+  notification_type: string;
+  notification_cta: string;
+  notification_read: boolean;
+  notification_created_at: string;
+};
+
+export type Chat = {
+  workspace_chat_id: string;
+  workspace_chat_title: string;
+  workspace_chat_created_at: string;
+};
+
+export type Message = {
+  workspace_conversation_id: string;
+  workspace_conversation_content: string;
+  workspace_conversation_member: string;
+};

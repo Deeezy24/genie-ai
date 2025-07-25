@@ -11,7 +11,6 @@ import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@workspace/ui/components/select";
 import { Slider } from "@workspace/ui/components/slider";
 import { Textarea } from "@workspace/ui/components/textarea";
-import { AxiosError } from "axios";
 import { Loader2, Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,6 +26,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
   const [summary, setSummary] = useState<string>("");
   const [displayedSummary, setDisplayedSummary] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [chatId, setChatId] = useState<string>("");
 
   const form = useForm<GenieTextTypes>({
     resolver: zodResolver(genieSummarySchema),
@@ -37,6 +37,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
       summaryType: type,
       workspaceId: workspace,
       inputTime: "Specific Time",
+      chatId: chatId,
+      modelId: "4f6bdbbe-8b98-48cb-a340-3f7bd7b6d11e",
     },
   });
 
@@ -51,10 +53,11 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
 
       switch (type) {
         case "text": {
-          const { data: result } = await summaryService.createSummary({
+          const { data: result, chatId } = await summaryService.createSummary({
             data,
             token,
           });
+          setChatId(chatId);
           summaryData = result;
           break;
         }
@@ -63,6 +66,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
             data,
             token,
           });
+          setChatId(chatId);
           summaryData = result;
           break;
         }
@@ -71,6 +75,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
             data,
             token,
           });
+          setChatId(chatId);
           summaryData = result;
           break;
         }
@@ -82,10 +87,12 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
           formData.append("summaryLength", data.summaryLength.toString());
           formData.append("workspaceId", data.workspaceId);
 
-          const { data: result } = await summaryService.createSummaryFile({
+          const { data: result, chatId } = await summaryService.createSummaryFile({
             data: formData,
             token,
           });
+
+          setChatId(chatId);
           summaryData = result;
           break;
         }
@@ -104,12 +111,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
           setIsTyping(false);
         }
       }, 20);
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message);
-      } else {
-        toast.error("Something went wrong.");
-      }
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "An error occurred");
     }
   };
 

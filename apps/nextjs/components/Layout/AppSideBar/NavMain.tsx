@@ -1,5 +1,6 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@workspace/ui/components/collapsible";
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ import {
 import { ChevronRight, PlusCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { NavGroup, NavMainItem } from "@/lib/types";
+import { NavGroup, NavMainItem, User } from "@/lib/types";
 
 type NavMainProps = {
   readonly items: readonly NavGroup[];
@@ -37,14 +38,16 @@ const NavItemExpanded = ({
   item,
   isActive,
   isSubmenuOpen,
+  currentPlan,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
   isSubmenuOpen: (subItems?: NavMainItem["subItems"]) => boolean;
+  currentPlan: string;
 }) => {
   return (
     <Collapsible key={item.title} asChild defaultOpen={isSubmenuOpen(item.subItems)} className="group/collapsible">
-      <SidebarMenuItem>
+      <SidebarMenuItem className="relative">
         <CollapsibleTrigger asChild>
           {item.subItems ? (
             <SidebarMenuButton
@@ -66,6 +69,11 @@ const NavItemExpanded = ({
             >
               <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon />}
+                {item.count !== undefined && item.count > 0 && (
+                  <div className="absolute -top-1 -right-1 text-[10px] px-1.5 bg-red-500 text-white rounded-full">
+                    {item.count}
+                  </div>
+                )}
                 <span>{item.title}</span>
                 {item.comingSoon && <IsComingSoon />}
               </Link>
@@ -75,17 +83,19 @@ const NavItemExpanded = ({
         {item.subItems && (
           <CollapsibleContent>
             <SidebarMenuSub>
-              {item.subItems.map((subItem) => (
-                <SidebarMenuSubItem key={subItem.title}>
-                  <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
-                    <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                      {subItem.icon && <subItem.icon />}
-                      <span>{subItem.title}</span>
-                      {subItem.comingSoon && <IsComingSoon />}
-                    </Link>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
-              ))}
+              {item.subItems
+                .filter((subItem) => subItem.plan.includes(currentPlan))
+                .map((subItem) => (
+                  <SidebarMenuSubItem key={subItem.title}>
+                    <SidebarMenuSubButton aria-disabled={subItem.comingSoon} isActive={isActive(subItem.url)} asChild>
+                      <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
+                        {subItem.icon && <subItem.icon />}
+                        <span>{subItem.title}</span>
+                        {subItem.comingSoon && <IsComingSoon />}
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </SidebarMenuSubItem>
+                ))}
             </SidebarMenuSub>
           </CollapsibleContent>
         )}
@@ -97,9 +107,11 @@ const NavItemExpanded = ({
 const NavItemCollapsed = ({
   item,
   isActive,
+  currentPlan,
 }: {
   item: NavMainItem;
   isActive: (url: string, subItems?: NavMainItem["subItems"]) => boolean;
+  currentPlan: string;
 }) => {
   const router = useRouter();
 
@@ -118,6 +130,11 @@ const NavItemCollapsed = ({
             onClick={handleClick}
           >
             {item.icon && <item.icon />}
+            {item.count !== undefined && item.count > 0 && (
+              <div className="absolute -top-1 -right-1 text-[10px] px-1.5 bg-red-500 text-white rounded-full">
+                {item.count}
+              </div>
+            )}
             <span>{item.title}</span>
             <ChevronRight />
           </SidebarMenuButton>
@@ -126,23 +143,25 @@ const NavItemCollapsed = ({
           <DropdownMenuContent className="w-50 space-y-1" side="right" align="start">
             {item.subItems &&
               item.subItems.length > 0 &&
-              item.subItems?.map((subItem) => (
-                <DropdownMenuItem key={subItem.title} asChild>
-                  <SidebarMenuSubButton
-                    key={subItem.title}
-                    asChild
-                    className="focus-visible:ring-0"
-                    aria-disabled={subItem.comingSoon}
-                    isActive={isActive(subItem.url)}
-                  >
-                    <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
-                      {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
-                      <span>{subItem.title}</span>
-                      {subItem.comingSoon && <IsComingSoon />}
-                    </Link>
-                  </SidebarMenuSubButton>
-                </DropdownMenuItem>
-              ))}
+              item.subItems
+                ?.filter((subItem) => subItem.plan.includes(currentPlan))
+                .map((subItem) => (
+                  <DropdownMenuItem key={subItem.title} asChild>
+                    test
+                    <SidebarMenuSubButton
+                      key={subItem.title}
+                      asChild
+                      className="focus-visible:ring-0"
+                      aria-disabled={subItem.comingSoon}
+                      isActive={isActive(subItem.url)}
+                    >
+                      <Link href={subItem.url} target={subItem.newTab ? "_blank" : undefined}>
+                        {subItem.icon && <subItem.icon className="[&>svg]:text-sidebar-foreground" />}
+                        <span>{subItem.title}</span>
+                      </Link>
+                    </SidebarMenuSubButton>
+                  </DropdownMenuItem>
+                ))}
           </DropdownMenuContent>
         )}
       </DropdownMenu>
@@ -152,7 +171,11 @@ const NavItemCollapsed = ({
 
 export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
+  const router = useRouter();
   const { state, isMobile } = useSidebar();
+
+  const queryClient = useQueryClient();
+  const user = queryClient.getQueryData<User>(["user-info"]);
 
   const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
@@ -165,6 +188,8 @@ export function NavMain({ items }: NavMainProps) {
     return subItems?.some((sub) => path.startsWith(sub.url)) ?? false;
   };
 
+  const currentPlan = user?.subscription.subscription_plan ?? "";
+
   return (
     <>
       <SidebarGroup>
@@ -173,32 +198,51 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuItem className="flex items-center gap-2">
               <SidebarMenuButton
                 tooltip="Quick Create"
+                onClick={() => router.push(`/m/${user?.currentWorkspace}/tools/genie`)}
                 className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
               >
                 <PlusCircleIcon />
-                <span>Quick Upload</span>
+                <span>Quick Summary</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      {items.map((group) => (
-        <SidebarGroup key={group.id}>
-          {group.withSeparator && <Separator className="my-2" />}
-          {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
-          <SidebarGroupContent className="flex flex-col gap-2">
-            <SidebarMenu>
-              {group.items?.map((item) =>
-                state === "collapsed" && !isMobile ? (
-                  <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />
-                ) : (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
-                ),
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      ))}
+      {items.map((group) => {
+        if (!group.plan.includes(currentPlan)) return null;
+
+        return (
+          <SidebarGroup key={group.id}>
+            {group.withSeparator && <Separator className="my-2" />}
+            {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
+
+            <SidebarGroupContent className="flex flex-col gap-2">
+              <SidebarMenu>
+                {group.items
+                  ?.filter((item) => item.plan.includes(currentPlan))
+                  .map((item) =>
+                    state === "collapsed" && !isMobile ? (
+                      <NavItemCollapsed
+                        key={item.title}
+                        currentPlan={currentPlan}
+                        item={item}
+                        isActive={isItemActive}
+                      />
+                    ) : (
+                      <NavItemExpanded
+                        key={item.title}
+                        currentPlan={currentPlan}
+                        item={item}
+                        isActive={isItemActive}
+                        isSubmenuOpen={isSubmenuOpen}
+                      />
+                    ),
+                  )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        );
+      })}
     </>
   );
 }

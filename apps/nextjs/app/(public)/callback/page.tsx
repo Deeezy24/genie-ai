@@ -15,11 +15,11 @@ export default function PostAuth() {
       try {
         const workspaceId = await userService.getDefaultWorkspace(null);
 
-        if (cancelled) return; // component unmounted
+        if (cancelled) return;
 
         router.replace(`/m/${workspaceId}/overview`);
       } catch (_) {
-        router.replace("/sign-out"); // fallback
+        router.replace("/sign-out");
       }
     })();
 

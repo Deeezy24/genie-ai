@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@clerk/nextjs";
 import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
@@ -8,17 +9,19 @@ type AccountLayoutProps = {
   children: React.ReactNode;
 };
 
-const NAV_ITEMS: { label: string; href: string }[] = [
-  { label: "Account", href: "/m/0/account" },
-  { label: "Billing", href: "/m/0/account/billing" },
-  { label: "Change Password", href: "/m/0/account/change-password" },
-];
-
 const toValue = (label: string) => label.toLowerCase().replace(/\s+/g, "-");
 
 const AccountLayout = ({ children }: AccountLayoutProps) => {
   const pathname = usePathname();
   const router = useRouter();
+
+  const { sessionClaims } = useAuth();
+
+  const NAV_ITEMS: { label: string; href: string }[] = [
+    { label: "Account", href: `/m/${sessionClaims?.metadata.currentWorkspace}/account` },
+    { label: "Billing", href: `/m/${sessionClaims?.metadata.currentWorkspace}/account/billing` },
+    { label: "Change Password", href: `/m/${sessionClaims?.metadata.currentWorkspace}/account/change-password` },
+  ];
 
   const activeLabel = NAV_ITEMS.find((item) => item.href === pathname)?.label ?? NAV_ITEMS[0]?.label;
 

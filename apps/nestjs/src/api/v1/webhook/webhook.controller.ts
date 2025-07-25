@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Post } from "@nestjs/common";
 import { Public } from "@/decorator/public/public.decorator";
-import type { UserCreatedWebhook } from "./dto/webhook.schema";
+import type { SubscriptionCreatedWebhook, UserCreatedWebhook } from "./dto/webhook.schema";
 import { WebhookService } from "./webhook.service";
 
 @Controller("webhook")
@@ -18,6 +18,16 @@ export class WebhookController {
       };
     } catch (error) {
       throw new BadRequestException("Failed to create user webhook");
+    }
+  }
+
+  @Public()
+  @Post("/lemonsqueezy")
+  async createSubscriptionWebhook(@Body() subscriptionCreatedWebhook: SubscriptionCreatedWebhook) {
+    try {
+      await this.webhookService.createSubscriptionWebhook(subscriptionCreatedWebhook);
+    } catch (error) {
+      throw new BadRequestException("Failed to create subscription webhook");
     }
   }
 }

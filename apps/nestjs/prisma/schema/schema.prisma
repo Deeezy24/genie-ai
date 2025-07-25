@@ -13,5 +13,5 @@ datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")   // pooler
   directUrl  = env("DATABASE_URL")   // same as pooler
-  schemas    = ["user_schema", "public", "workspace_schema"]
+  schemas    = ["user_schema", "public", "workspace_schema", "subscription_schema", "chat_schema", "notification_schema", "model_schema"]
 }

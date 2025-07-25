@@ -26,3 +26,11 @@ export const validateFile = (file: Storage.MultipartFile, options: MultipartOpti
     return validator.buildErrorMessage(file);
   }
 };
+
+export const getChatTitle = (prompt: string, wordLimit = 5) => {
+  const trimmed = prompt.trim();
+  const words = trimmed.split(/\s+/).slice(0, wordLimit);
+  const title = words.join(" ");
+
+  return title.charAt(0).toUpperCase() + title.slice(1);
+};
