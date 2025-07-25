@@ -16,6 +16,8 @@ const ToolsSchema = z
     startTimestamp: z.string().optional().default("00:00:00"),
     endTimestamp: z.string().optional().default("00:00:00"),
     workspaceId: z.string(),
+    modelId: z.string(),
+    chatId: z.string(),
   })
   .superRefine((data, ctx) => {
     switch (data.summaryType) {

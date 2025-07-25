@@ -20,6 +20,7 @@ export interface NavSubItem {
   url: string;
   icon?: LucideIcon;
   comingSoon?: boolean;
+  id: string;
   newTab?: boolean;
   plan: string[] | "free" | "basic" | "pro";
 }
@@ -29,7 +30,9 @@ export type NavMainItem = {
   url: string;
   icon?: LucideIcon;
   subItems?: NavSubItem[];
+  count?: number;
   comingSoon?: boolean;
+  id: string | number;
   newTab?: boolean;
   plan: string[] | "free" | "basic" | "pro";
 };
@@ -76,4 +79,26 @@ export type BillingHistory = {
   subscription_payment_date_created: string;
   subscription_payment_date_updated: string;
   subscription_payment_date_next_bill: string;
+};
+
+export type Notification = {
+  notification_id: string;
+  notification_message: string;
+  notification_subject: string;
+  notification_type: string;
+  notification_cta: string;
+  notification_read: boolean;
+  notification_created_at: string;
+};
+
+export type Chat = {
+  workspace_chat_id: string;
+  workspace_chat_title: string;
+  workspace_chat_created_at: string;
+};
+
+export type Message = {
+  workspace_conversation_id: string;
+  workspace_conversation_content: string;
+  workspace_conversation_member: string;
 };

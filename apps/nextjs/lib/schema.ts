@@ -64,6 +64,8 @@ export const genieSummarySchema = z
     startTimestamp: z.string().optional(),
     endTimestamp: z.string().optional(),
     workspaceId: z.string(),
+    chatId: z.string().optional(),
+    modelId: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     switch (data.summaryType) {
@@ -114,3 +116,19 @@ export const checkOutSchema = z.object({
 });
 
 export type CheckOutSchema = z.infer<typeof checkOutSchema>;
+
+export const messagesChatSchema = z.object({
+  message: z.string(),
+  chatId: z.string().optional().nullable(),
+  modelId: z.string().optional().nullable(),
+});
+
+export type MessagesSchema = z.infer<typeof messagesChatSchema>;
+
+export const getMessagesChatSchema = z.object({
+  chatId: z.string().uuid(),
+  page: z.coerce.number(),
+  limit: z.coerce.number(),
+});
+
+export type GetMessagesChatSchema = z.infer<typeof getMessagesChatSchema>;

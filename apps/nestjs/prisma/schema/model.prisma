@@ -1,0 +1,9 @@
+model agent_model_table {
+  agent_model_id String   @id @default(uuid()) @db.Uuid
+  agent_model_name String
+  agent_model_description String
+  agent_model_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  workspace_conversation_table workspace_conversation_table[]
+  @@schema("model_schema")
+}

@@ -2,19 +2,15 @@
 
 import { Separator } from "@workspace/ui/components/separator";
 import { SidebarInset, SidebarTrigger } from "@workspace/ui/components/sidebar";
-import useUserHook from "@/hooks/useUserHook";
-import { User } from "@/lib/types";
 import { AccountSwitcher } from "./AccountSwitcher";
 import { AppSidebar } from "./AppSideBar";
 import { Breadcrumbs } from "./BreadCrumbs";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const SideBarInitializer = ({ children }: { children: React.ReactNode }) => {
-  const user = useUserHook();
-
   return (
     <>
-      <AppSidebar user={user ?? ({} as User)} variant="inset" collapsible="icon" />
+      <AppSidebar variant="inset" collapsible="icon" />
       <SidebarInset className="flex flex-col">
         <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 rounded-t-xl">
           <div className="flex w-full items-center justify-between px-4 lg:px-6">
@@ -25,7 +21,7 @@ const SideBarInitializer = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="flex items-center gap-2">
               <ThemeSwitcher />
-              <AccountSwitcher user={user ?? ({} as User)} />
+              <AccountSwitcher />
             </div>
           </div>
         </header>

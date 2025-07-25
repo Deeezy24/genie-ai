@@ -4,10 +4,12 @@ import * as cheerio from "cheerio";
 import pdfParse from "pdf-parse";
 import { YoutubeTranscript } from "youtube-transcript";
 import { DEFAULT_MESSAGE } from "@/constants/app.constant";
+import { SummarizerPrompt } from "@/lib/prompts";
 import { AnthropicService } from "@/service/anthropic/anthropic.service";
 import { OpenAIService } from "@/service/openai/openai.service";
 import { PrismaService } from "@/service/prisma/prisma.service";
 import { FFmpegService } from "@/utils/ffmpeg.service";
+import { getChatTitle } from "@/utils/helper";
 
 @Injectable()
 export class ToolsService {
@@ -132,17 +134,21 @@ export class ToolsService {
     return await this.ffmpegService.trimAudioBuffer(audioBuffer, start, end);
   }
 
-  async summarizeText(
-    text: string,
-    tone: string,
-    length: string,
-    memberId: string,
-  ): Promise<{ message: string; data: string }> {
-    const prompt = this.buildPrompt(tone, `${length}`, "text");
+  async summarizeText(params: {
+    text: string;
+    tone: string;
+    length: string;
+    chatId: string;
+    memberId: string;
+    modelId: string;
+  }): Promise<{ message: string; data: string; chatId: string }> {
+    const { text, tone, length, chatId, memberId, modelId } = params;
+    let chat = "";
+    const prompt = SummarizerPrompt(tone, `${length}`, "text");
 
     if (process.env.NODE_ENV === "local") {
-      await this.saveMessageResponse(text, DEFAULT_MESSAGE, memberId, "genie - text");
-      return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE };
+      await this.saveMessageResponse({ message: text, response: DEFAULT_MESSAGE, memberId, chatId, modelId: modelId });
+      return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE, chatId: chat };
     } else {
       try {
         const anthropicResult = await this.anthropicService.summarizeText(text, prompt);
@@ -150,9 +156,15 @@ export class ToolsService {
           throw new Error("Anthropic returned null result");
         }
 
-        await this.saveMessageResponse(text, anthropicResult, memberId, "genie - text");
+        chat = await this.saveMessageResponse({
+          message: text,
+          response: anthropicResult,
+          memberId,
+          chatId,
+          modelId,
+        });
 
-        return { message: "Summarized with Anthropic", data: anthropicResult };
+        return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
       } catch (anthropicError) {
         try {
           const openAiResult = await this.openaiService.summarizeText(text, prompt);
@@ -160,10 +172,15 @@ export class ToolsService {
             throw new Error("OpenAI returned null result");
           }
 
-          await this.saveMessageResponse(text, openAiResult, memberId, "genie - text");
-          return { message: "Summarized with OpenAI", data: openAiResult };
+          chat = await this.saveMessageResponse({
+            message: text,
+            response: openAiResult,
+            memberId,
+            chatId,
+            modelId,
+          });
+          return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
         } catch (openAiError) {
-          console.error("OpenAI failed to generate a summary:", openAiError);
           throw new Error("Both LLMs failed to generate a summary.");
         }
       }
@@ -175,13 +192,20 @@ export class ToolsService {
     tone: string,
     length: string,
     memberId: string,
-  ): Promise<{ message: string; data: string }> {
+    chatId: string,
+  ): Promise<{ message: string; data: string; chatId: string }> {
     const base64Image = buffer.toString("base64");
-    const prompt = this.buildPrompt(tone, length, "image");
-
+    const prompt = SummarizerPrompt(tone, length, "image");
+    let chat = "";
     if (process.env.NODE_ENV === "local") {
-      await this.saveMessageResponse(base64Image, DEFAULT_MESSAGE, memberId, "genie - image");
-      return { message: "Summarized with Anthropic", data: DEFAULT_MESSAGE };
+      await this.saveMessageResponse({
+        message: base64Image,
+        response: DEFAULT_MESSAGE,
+        memberId,
+        chatId,
+        modelId: "genie - image",
+      });
+      return { message: "Summarized with Anthropic", data: DEFAULT_MESSAGE, chatId: chat };
     } else {
       try {
         const anthropicResult = await this.anthropicService.summarizeImageWithVision(base64Image, prompt);
@@ -189,9 +213,15 @@ export class ToolsService {
           throw new Error("Anthropic returned null result");
         }
 
-        await this.saveMessageResponse(base64Image, anthropicResult, memberId, "genie - image");
+        chat = await this.saveMessageResponse({
+          message: base64Image,
+          response: anthropicResult,
+          memberId,
+          chatId,
+          modelId: "genie - image",
+        });
 
-        return { message: "Summarized with Anthropic", data: anthropicResult };
+        return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
       } catch (anthropicError) {
         try {
           const openAiResult = await this.openaiService.summarizeImageWithVision(base64Image, prompt);
@@ -199,9 +229,15 @@ export class ToolsService {
             throw new Error("OpenAI returned null result");
           }
 
-          await this.saveMessageResponse(base64Image, openAiResult, memberId, "genie - image");
+          chat = await this.saveMessageResponse({
+            message: base64Image,
+            response: openAiResult,
+            memberId,
+            chatId,
+            modelId: "genie - image",
+          });
 
-          return { message: "Summarized with OpenAI", data: openAiResult };
+          return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
         } catch (openAiError) {
           throw new Error("Both LLMs failed to summarize the image.");
         }
@@ -209,23 +245,60 @@ export class ToolsService {
     }
   }
 
-  async saveMessageResponse(message: string, response: string, memberId: string, agent: string): Promise<void> {
-    await this.prisma.workspace_message_table.create({
+  async saveMessageResponse(params: {
+    message: string;
+    response: string;
+    memberId: string;
+    chatId: string;
+    modelId: string;
+  }): Promise<string> {
+    const { message, response, memberId, chatId, modelId } = params;
+
+    if (chatId?.trim()) {
+      await this.prisma.workspace_conversation_table.createMany({
+        data: [
+          {
+            workspace_conversation_content: message,
+
+            workspace_conversation_model_id: modelId,
+            workspace_coversation_chat_id: chatId,
+          },
+          {
+            workspace_conversation_content: response,
+            workspace_conversation_model_id: modelId,
+            workspace_coversation_chat_id: chatId,
+            workspace_conversation_is_agent: true,
+          },
+        ],
+      });
+
+      return chatId;
+    }
+
+    const newChat = await this.prisma.workspace_chat_table.create({
       data: {
-        workspace_message_content: message,
-        workspace_member_id: memberId,
-        agent_response: {
-          create: {
-            workspace_agent_response_content: response,
-            workspace_agent: agent,
+        workspace_chat_member_id: memberId,
+        workspace_chat_type: "SUMMARIZER",
+        workspace_chat_title: getChatTitle(message),
+        workspace_conversation: {
+          createMany: {
+            data: [
+              {
+                workspace_conversation_content: message,
+                workspace_conversation_model_id: modelId,
+              },
+              {
+                workspace_conversation_content: response,
+                workspace_conversation_model_id: modelId,
+                workspace_conversation_is_agent: true,
+              },
+            ],
           },
         },
       },
     });
-  }
 
-  private buildPrompt(tone: string, length: string, type: string): string {
-    return `Please summarize the following ${type} with a ${tone.toLowerCase()} tone. Make it ${length}.`;
+    return newChat.workspace_chat_id;
   }
 
   private timeStringToSeconds(time: string): number {
