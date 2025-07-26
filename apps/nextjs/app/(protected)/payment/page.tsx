@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import PaymentSuccessPage from "@/components/PaymentSuccessPage/PaymentSuccessPage";
-import { checkOutService } from "@/services/check-out/check-out";
+import { checkOutService } from "@/services/check-out/check-out-service";
 
 const handleFetchLatestPaidCheckout = async () => {
   const { getToken, sessionClaims } = await auth();

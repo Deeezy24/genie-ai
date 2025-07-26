@@ -10,7 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import useUserHook from "@/hooks/useUserHook";
 import { CheckOutSchema } from "@/lib/schema";
-import { checkOutService } from "@/services/check-out/check-out";
+import { checkOutService } from "@/services/check-out/check-out-service";
 
 const pricingPlans = [
   {

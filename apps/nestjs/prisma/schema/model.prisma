@@ -5,5 +5,22 @@ model agent_model_table {
   agent_model_created_at DateTime @default(now()) @db.Timestamptz(3)
 
   workspace_conversation_table workspace_conversation_table[]
+  agent_tools_table agent_tools_table[]
+  @@schema("model_schema")
+}
+
+
+model agent_tools_table {
+  agent_tool_id String @id @default(uuid()) @db.Uuid
+  agent_tool_name String
+  agent_tool_description String
+  agent_tool_icon String
+  agent_tool_is_popular Boolean @default(false)
+  agent_tool_url String
+  agent_tool_model_id String @db.Uuid
+  agent_tool_created_at DateTime @default(now()) @db.Timestamptz(3)
+
+  agent_model_table agent_model_table[]
+
   @@schema("model_schema")
 }

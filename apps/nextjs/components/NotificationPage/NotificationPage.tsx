@@ -7,7 +7,7 @@ import { Bell, Check } from "lucide-react";
 import useNotificationHook from "@/hooks/useNotificationHook";
 import { getIconColor, getNotificationStyles, getPastDateInMinutes } from "@/lib/helper";
 import { Notification } from "@/lib/types";
-import { NotificationService } from "@/services/notification/notification";
+import { NotificationService } from "@/services/notification/notification-service";
 
 const NotificationsPage = () => {
   const queryClient = useQueryClient();
