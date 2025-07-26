@@ -102,3 +102,13 @@ export type Message = {
   workspace_conversation_content: string;
   workspace_conversation_member: string;
 };
+
+export type Tools = {
+  agent_tool_id: string;
+  agent_tool_name: string;
+  agent_tool_description: string;
+  agent_tool_created_at: string;
+  agent_model_agent_name: string;
+  agent_tool_icon: string;
+  agent_tool_url: string;
+};

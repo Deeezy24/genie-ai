@@ -1,6 +1,6 @@
 import { useAuth } from "@clerk/nextjs";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { NotificationService } from "@/services/notification/notification";
+import { NotificationService } from "@/services/notification/notification-service";
 
 const useNotificationHook = () => {
   const { getToken } = useAuth();

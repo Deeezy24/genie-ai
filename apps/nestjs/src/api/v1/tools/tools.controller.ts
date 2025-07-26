@@ -1,10 +1,10 @@
-import { Body, Controller, Post, Req, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors } from "@nestjs/common";
 import { SummaryLength } from "@/constants/app.constant";
 import { Files } from "@/decorator/files/files.decorator";
 import { AiRateLimitGuard } from "@/guard/ai-rate-limit/ai-rate-limit.guard";
 import { MultipartInterceptor } from "@/interceptor/file/file.interceptor";
 import { RedisService } from "@/service/redis/redis.service";
-import { ToolsSummaryDto } from "./dto/tools.schema";
+import { GetToolsDto, ToolsSummaryDto } from "./dto/tools.schema";
 import { ToolsService } from "./tools.service";
 
 @Controller("tools")
@@ -71,6 +71,15 @@ export class ToolsController {
         default:
           throw new Error("Unsupported summary type");
       }
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  @Get("/get-tools")
+  async getTools(@Query() dto: GetToolsDto, @Req() req: FastifyRequestWithUser) {
+    try {
+      return this.toolsService.getTools(dto, req.user.publicMetadata.currentWorkspace as string);
     } catch (error) {
       throw new Error(error as string);
     }

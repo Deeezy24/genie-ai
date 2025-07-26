@@ -54,6 +54,16 @@ const ToolsSchema = z
     }
   });
 
-class ToolsSummaryDto extends createZodDto(ToolsSchema) {}
+const GetToolsSchema = z.object({
+  model: z.string().optional(),
+  isPopular: z.preprocess((val) => {
+    if (val === "true") return true;
+    if (val === "false") return false;
+    return val; // Let Zod throw an error if it's invalid
+  }, z.boolean().optional()),
+});
 
-export { ToolsSummaryDto };
+class ToolsSummaryDto extends createZodDto(ToolsSchema) {}
+class GetToolsDto extends createZodDto(GetToolsSchema) {}
+
+export { GetToolsDto, ToolsSummaryDto };

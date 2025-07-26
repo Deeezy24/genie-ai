@@ -1,5 +1,6 @@
 import ytdl from "@distube/ytdl-core";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
 import * as cheerio from "cheerio";
 import pdfParse from "pdf-parse";
 import { YoutubeTranscript } from "youtube-transcript";
@@ -10,6 +11,7 @@ import { OpenAIService } from "@/service/openai/openai.service";
 import { PrismaService } from "@/service/prisma/prisma.service";
 import { FFmpegService } from "@/utils/ffmpeg.service";
 import { getChatTitle } from "@/utils/helper";
+import { GetToolsDto } from "./dto/tools.schema";
 
 @Injectable()
 export class ToolsService {
@@ -299,6 +301,47 @@ export class ToolsService {
     });
 
     return newChat.workspace_chat_id;
+  }
+
+  async getTools(dto: GetToolsDto, currentWorkspace: string) {
+    const { model, isPopular } = dto;
+
+    const whereClause: Prisma.agent_tools_tableWhereInput = {
+      ...(model && { agent_tool_name: model }),
+      ...(typeof isPopular === "boolean" && { agent_tool_is_popular: isPopular }),
+    };
+
+    const tools = await this.prisma.agent_tools_table.findMany({
+      where: whereClause,
+      select: {
+        agent_tool_id: true,
+        agent_tool_name: true,
+        agent_tool_description: true,
+        agent_tool_created_at: true,
+        agent_tool_icon: true,
+        agent_tool_url: true,
+        agent_model_table: {
+          select: {
+            agent_model_name: true,
+          },
+        },
+      },
+      orderBy: {
+        agent_tool_created_at: "desc",
+      },
+    });
+
+    const formattedTools = tools.map((tool) => ({
+      agent_tool_id: tool.agent_tool_id,
+      agent_tool_name: tool.agent_tool_name,
+      agent_tool_description: tool.agent_tool_description,
+      agent_tool_created_at: tool.agent_tool_created_at,
+      agent_model_agent_name: tool.agent_model_table[0]?.agent_model_name,
+      agent_tool_icon: tool.agent_tool_icon,
+      agent_tool_url: `/m/${currentWorkspace}/${tool.agent_tool_url}`,
+    }));
+
+    return { data: formattedTools };
   }
 
   private timeStringToSeconds(time: string): number {

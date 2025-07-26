@@ -2,31 +2,14 @@
 
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 import { Separator } from "@workspace/ui/components/separator";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { Tools } from "@/lib/types";
 
-const tools = (workspace: string) => [
-  {
-    title: "AI Summarizer",
-    description: "Instantly get the key points from any text. Your fast-track to understanding.",
-    icon: "✨",
-    url: `/m/${workspace}/tools/genie`,
-  },
-  {
-    title: "Paragraph Generator",
-    description: "Create perfectly structured paragraphs on any topic. Boost your writing productivity.",
-    icon: "🚀",
-    url: `/m/${workspace}/tools/paragraph-writer`,
-  },
-  {
-    title: "Content Rewriter",
-    description: "Rephrase and refresh your content to make it unique and engaging.",
-    icon: "🔄",
-    url: `/m/${workspace}/tools/paraphraser`,
-  },
-];
+type Props = {
+  tools: Tools[];
+};
 
-const OverviewPage = () => {
-  const { workspace } = useParams() as { workspace: string };
+const OverviewPage = ({ tools }: Props) => {
   const router = useRouter();
 
   const handleToolClick = (url: string) => {
@@ -41,18 +24,18 @@ const OverviewPage = () => {
 
       <h2 className="text-xl font-bold mb-4">Popular Tools</h2>
       <div className="grid md:grid-cols-3 gap-4">
-        {tools(workspace).map((tool) => (
+        {tools.map((tool) => (
           <Card
-            key={tool.title}
+            key={tool.agent_tool_id}
             className="transition-colors hover:bg-muted cursor-pointer"
-            onClick={() => handleToolClick(tool.url)}
+            onClick={() => handleToolClick(tool.agent_tool_url)}
           >
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="text-2xl">{tool.icon}</div>
-                <CardTitle>{tool.title}</CardTitle>
+                <div className="text-2xl">{tool.agent_tool_icon}</div>
+                <CardTitle>{tool.agent_tool_name}</CardTitle>
               </div>
-              <CardDescription className="pt-2">{tool.description}</CardDescription>
+              <CardDescription className="pt-2">{tool.agent_tool_description}</CardDescription>
             </CardHeader>
           </Card>
         ))}

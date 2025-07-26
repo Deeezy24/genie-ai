@@ -11,16 +11,14 @@ import { Skeleton } from "@workspace/ui/components/skeleton";
 import { TabsContent } from "@workspace/ui/components/tabs";
 import { AlertCircle, Calendar, ChevronDown, FileX, Receipt } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import useUserHook from "@/hooks/useUserHook";
 import { NAV_BG } from "@/lib/constant";
 import { formatDate } from "@/lib/helper";
-import { billingService } from "@/services/billing/billing";
+import { billingService } from "@/services/billing/billing-service";
 
 const BillingPage = () => {
   const router = useRouter();
   const user = useUserHook();
-  const [isDownloading, setIsDownloading] = useState(false);
 
   const { getToken } = useAuth();
 
