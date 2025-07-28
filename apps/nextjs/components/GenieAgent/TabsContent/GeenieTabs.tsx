@@ -116,7 +116,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
   const isInputTime = form.watch("inputTime");
   return (
     <div className="flex gap-4 rounded-md p-4">
-      <Card className="w-3/5 border-none shadow-none">
+      <Card className="w-3/5 border border-border shadow-none bg-card">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="hidden">
@@ -133,7 +133,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                       <FormItem>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="rounded-full px-4 py-1">
+                            <SelectTrigger className="rounded-full px-4 py-1 border border-input bg-background">
                               <SelectValue placeholder="Select a summary mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -151,7 +151,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                     control={form.control}
                     name="summaryLength"
                     render={({ field }) => (
-                      <div className="flex items-center gap-2 rounded-full border px-3 py-1">
+                      <div className="flex items-center gap-2 rounded-full border border-input bg-background px-3 py-1">
                         <span className="text-sm font-medium text-muted-foreground">Shorter</span>
                         <Slider
                           value={[field.value]}
@@ -177,7 +177,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                         <FormLabel>Time</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="rounded-full px-4 py-1">
+                            <SelectTrigger className="rounded-full px-4 py-1 border border-input bg-background">
                               <SelectValue placeholder="Select a summary mode" />
                             </SelectTrigger>
                             <SelectContent>
@@ -243,7 +243,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                     <FormItem>
                       <FormControl>
                         <Textarea
-                          className="min-h-96 resize-none"
+                          className="min-h-96 resize-none border border-input bg-background"
                           placeholder="Describe what is the best way to summarize the given text"
                           {...field}
                         />
@@ -259,7 +259,11 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Input placeholder="Enter a URL to summarize" {...field} />
+                        <Input
+                          className="border border-input bg-background"
+                          placeholder="Enter a URL to summarize"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -272,7 +276,11 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <DropzoneComponent value={field.value as unknown as File} onChange={field.onChange} />
+                        <DropzoneComponent
+                          value={field.value as unknown as File}
+                          onChange={field.onChange}
+                          className="border-none"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -289,6 +297,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                           type="audio"
                           value={field.value as unknown as File}
                           onChange={field.onChange}
+                          className="border-none"
                         />
                       </FormControl>
                       <FormMessage />
@@ -303,7 +312,11 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                     <FormItem>
                       <FormLabel>YouTube Video URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://www.youtube.com/watch?v=example" {...field} />
+                        <Input
+                          className="border border-input bg-background"
+                          placeholder="https://www.youtube.com/watch?v=example"
+                          {...field}
+                        />
                       </FormControl>
                       <p className="text-xs text-muted-foreground mt-1">Paste a YouTube video URL to summarize.</p>
                       <FormMessage />
@@ -321,6 +334,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
                           type="image"
                           value={field.value as unknown as File}
                           onChange={field.onChange}
+                          className="border-none"
                         />
                       </FormControl>
                       <FormMessage />
@@ -342,7 +356,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
         </Form>
       </Card>
 
-      <Card className="w-2/5 border-none shadow-none">
+      <Card className="w-2/5 border border-border shadow-none bg-card">
         <CardHeader>
           <CardTitle>Summary</CardTitle>
         </CardHeader>

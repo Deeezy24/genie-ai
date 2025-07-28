@@ -10,9 +10,10 @@ type DropzoneComponentProps = {
   value?: File;
   onChange?: (file: File | null) => void;
   type?: FileType;
+  className?: string;
 };
 
-const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponentProps) => {
+const DropzoneComponent = ({ onChange, value, type = "file", className }: DropzoneComponentProps) => {
   const [fileObj, setFileObj] = useState<{
     file: File;
     id: string;
@@ -127,7 +128,7 @@ const DropzoneComponent = ({ onChange, value, type = "file" }: DropzoneComponent
   };
 
   return (
-    <Card className="dark:bg-transparent shadow-none">
+    <Card className={`dark:bg-transparent shadow-none ${className || ""}`}>
       <CardHeader className="hidden">
         <CardTitle className="text-center">File Upload</CardTitle>
       </CardHeader>
