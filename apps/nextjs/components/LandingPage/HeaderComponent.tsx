@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@workspace/ui/components/button";
-import { Menu, X } from "lucide-react";
+import { Brain } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const HeaderComponent = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -13,73 +13,33 @@ const HeaderComponent = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navItems = [
-    { href: "#features", label: "Features" },
-    { href: "#pricing", label: "Pricing" },
-    { href: "#about", label: "About" },
-    { href: "#contact", label: "Contact" },
-  ];
-
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/95 shadow-lg backdrop-blur-sm border-b border-border/20" : "bg-transparent"
+        scrolled ? "bg-background/90 shadow-lg backdrop-blur" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-foreground">Genie</span>
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-gradient-to-r from-primary to-primary/60 rounded-lg flex items-center justify-center">
+            <Brain className="w-5 h-5 text-primary-foreground" />
           </div>
-
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              Sign In
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Get Started</Button>
-          </div>
-
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </Button>
+          <span className="text-xl font-bold">Genie AI</span>
         </div>
-
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-border/20 bg-black">
-            <div className="flex flex-col space-y-4 pt-4">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium py-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <div className="flex flex-col space-y-2 pt-4 border-t border-border/20">
-                <Button variant="outline" className="w-full justify-center">
-                  Sign In
-                </Button>
-                <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Get Started
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            Features
+          </Link>
+          <Link href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            Pricings
+          </Link>
+          <Link href="/sign-in" className="text-muted-foreground hover:text-foreground transition-colors">
+            Sign In
+          </Link>
+          <Button asChild>
+            <Link href="/sign-up">Get Started</Link>
+          </Button>
+        </nav>
       </div>
     </header>
   );
