@@ -2,7 +2,7 @@ import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
 const SummaryTone = z.enum(["Simple", "Detailed", "Bullet Points"]);
-const SummaryLength = z.coerce.number().min(25).max(75);
+const SummaryLength = z.coerce.number().min(25).max(100);
 const SummaryType = z.enum(["text", "url", "file", "audio", "image", "video"]);
 
 const ToolsSchema = z
@@ -63,7 +63,30 @@ const GetToolsSchema = z.object({
   }, z.boolean().optional()),
 });
 
+export const paragraphGeneratorSchema = z
+  .object({
+    summaryTone: z.string(),
+    summaryLength: SummaryLength,
+    inputText: z.string(),
+    workspaceId: z.string(),
+    chatId: z.string().optional(),
+    modelId: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.summaryLength || data.inputText.trim() === "") {
+      ctx.addIssue({
+        path: ["inputText"],
+        code: z.ZodIssueCode.custom,
+        message: "Text is required for paragraph generation",
+      });
+    }
+  });
+
+export type ParagraphGeneratorTypes = z.infer<typeof paragraphGeneratorSchema>;
+
 class ToolsSummaryDto extends createZodDto(ToolsSchema) {}
 class GetToolsDto extends createZodDto(GetToolsSchema) {}
+class ParagraphGeneratorDto extends createZodDto(paragraphGeneratorSchema) {}
+class ContentRewriterDto extends createZodDto(paragraphGeneratorSchema) {}
 
-export { GetToolsDto, ToolsSummaryDto };
+export { ContentRewriterDto, GetToolsDto, ParagraphGeneratorDto, ToolsSummaryDto };

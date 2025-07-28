@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@workspace/ui/components/button";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const HeaderComponent = () => {
@@ -45,10 +46,15 @@ const HeaderComponent = () => {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              Sign In
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Get Started</Button>
+            <Link href="/sign-in">
+              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+                Sign In
+              </Button>
+            </Link>
+
+            <Link href="/sign-up">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">Get Started</Button>
+            </Link>
           </div>
 
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -70,12 +76,16 @@ const HeaderComponent = () => {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t border-border/20">
-                <Button variant="outline" className="w-full justify-center">
-                  Sign In
-                </Button>
-                <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-primary-foreground">
-                  Get Started
-                </Button>
+                <Link href="/sign-in">
+                  <Button variant="outline" className="w-full justify-center">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button className="w-full justify-center bg-primary hover:bg-primary/90 text-primary-foreground">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

@@ -1,9 +1,8 @@
 import { Button } from "@workspace/ui/components/button";
 import { ArrowRight, CheckCircle, Play, Sparkles, Zap } from "lucide-react";
+import Link from "next/link";
 
 const HeroSection = () => {
-  const heading = "writing needs";
-
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-zinc-900 via-black to-zinc-800 min-h-screen flex items-center justify-center">
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
@@ -30,35 +29,29 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-            >
-              Start Free Trial
-              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-            </Button>
+            <Link href="/sign-in">
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-6 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
+              >
+                Start Free Trial
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
+            </Link>
 
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-border hover:bg-accent px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105 group"
-            >
-              <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
-              Watch Demo
-            </Button>
+            <Link href="/sign-up">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-border hover:bg-accent px-8 py-6 text-lg rounded-xl transition-all duration-300 hover:scale-105 group"
+              >
+                <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                Watch Demo
+              </Button>
+            </Link>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-sm text-muted-foreground">
-            {/* <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-background flex items-center justify-center">
-                  <Users className="w-4 h-4 text-primary" />
-                </div>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/30 to-primary/50 border-2 border-background" />
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-primary/40 border-2 border-background" />
-              </div>
-            </div> */}
-
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
               <span>Generate content in seconds</span>

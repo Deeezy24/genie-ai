@@ -49,7 +49,7 @@ const ChatInterfaceSection = () => {
   return (
     <section id="chat" className="px-4 py-20 relative bg-zinc-800/25 overflow-hidden z-50">
       <div className="absolute inset-0 bg-black/10 -z-10"></div>
-      {/* Animated background elements */}
+
       <div className="absolute inset-0 bg-gradient-to-r from-zinc-900/10 via-zinc-800/10 to-zinc-900/10"></div>
       <div className="absolute top-42 left-10 w-72 h-72 bg-gradient-to-r from-zinc-900/20 to-zinc-800/20 rounded-full blur-3xl animate-pulse"></div>
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-zinc-900/20 to-zinc-800/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -67,7 +67,6 @@ const ChatInterfaceSection = () => {
 
         <div className="max-w-4xl mx-auto">
           <Card className="bg-zinc-900/80 backdrop-blur-xl border border-zinc-700/50 shadow-2xl overflow-hidden">
-            {/* Chat Header */}
             <div className="px-6 py-4 bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 border-b border-zinc-700/50">
               <div className="flex items-center gap-3">
                 <div>
@@ -77,7 +76,6 @@ const ChatInterfaceSection = () => {
             </div>
 
             <CardContent className="p-0">
-              {/* Messages Container */}
               <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-zinc-900/50 to-zinc-800/50">
                 {mockMessages.map((msg) => (
                   <div

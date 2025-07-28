@@ -8,11 +8,11 @@
     "clean:node_modules": "pnpm dlx rimraf \"**/node_modules\" --glob",
     "clean:turbo": "pnpm dlx rimraf \"**/.turbo\" --glob",
     "db:generate": "pnpm run --filter nestjs prisma:generate",
+    "db:push": "pnpm run --filter nestjs db:push",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "lint:fix": "biome check --write",
     "prepare": "husky",
-    "prisma:generate": "pnpm dlx prisma generate --schema ./prisma",
     "start:nestjs": "pnpm run --filter nestjs start"
   },
   "lint-staged": {

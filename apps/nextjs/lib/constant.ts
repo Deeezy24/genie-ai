@@ -22,4 +22,4 @@ export const TXT_SECONDARY = "text-gray-600 dark:text-gray-400";
 export const SEP = "bg-gray-200 dark:bg-zinc-700";
 export const INPUT_BG = "bg-gray-50 dark:bg-zinc-700 dark:border-zinc-600 focus:ring-teal-500";
 
-export const AGENT_TYPES = ["genie"];
+export const AGENT_TYPES = ["genie", "paragraph-writer", "paraphraser", "humanizer"];

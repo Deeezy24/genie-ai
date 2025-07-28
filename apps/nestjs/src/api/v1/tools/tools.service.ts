@@ -1,17 +1,17 @@
 import ytdl from "@distube/ytdl-core";
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
+import { ChatType, Prisma } from "@prisma/client";
 import * as cheerio from "cheerio";
 import pdfParse from "pdf-parse";
 import { YoutubeTranscript } from "youtube-transcript";
 import { DEFAULT_MESSAGE } from "@/constants/app.constant";
-import { SummarizerPrompt } from "@/lib/prompts";
+import { ContentRewriterPrompt, ParagraphGeneratorPrompt, SummarizerPrompt } from "@/lib/prompts";
 import { AnthropicService } from "@/service/anthropic/anthropic.service";
 import { OpenAIService } from "@/service/openai/openai.service";
 import { PrismaService } from "@/service/prisma/prisma.service";
 import { FFmpegService } from "@/utils/ffmpeg.service";
 import { getChatTitle } from "@/utils/helper";
-import { GetToolsDto } from "./dto/tools.schema";
+import { GetToolsDto, ParagraphGeneratorDto } from "./dto/tools.schema";
 
 @Injectable()
 export class ToolsService {
@@ -21,7 +21,7 @@ export class ToolsService {
     private readonly prisma: PrismaService,
     private readonly ffmpegService: FFmpegService,
   ) {}
-
+  // file upload
   async fetchAndCleanWebPage(url: string): Promise<string> {
     const response = await fetch(url);
     const html = await response.text();
@@ -149,7 +149,14 @@ export class ToolsService {
     const prompt = SummarizerPrompt(tone, `${length}`, "text");
 
     if (process.env.NODE_ENV === "local") {
-      await this.saveMessageResponse({ message: text, response: DEFAULT_MESSAGE, memberId, chatId, modelId: modelId });
+      await this.saveMessageResponse({
+        message: text,
+        response: DEFAULT_MESSAGE,
+        memberId,
+        chatId,
+        modelId: modelId,
+        type: "SUMMARIZER",
+      });
       return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE, chatId: chat };
     } else {
       try {
@@ -164,6 +171,7 @@ export class ToolsService {
           memberId,
           chatId,
           modelId,
+          type: "SUMMARIZER",
         });
 
         return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
@@ -180,6 +188,7 @@ export class ToolsService {
             memberId,
             chatId,
             modelId,
+            type: "SUMMARIZER",
           });
           return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
         } catch (openAiError) {
@@ -195,6 +204,7 @@ export class ToolsService {
     length: string,
     memberId: string,
     chatId: string,
+    modelId: string,
   ): Promise<{ message: string; data: string; chatId: string }> {
     const base64Image = buffer.toString("base64");
     const prompt = SummarizerPrompt(tone, length, "image");
@@ -206,6 +216,7 @@ export class ToolsService {
         memberId,
         chatId,
         modelId: "genie - image",
+        type: "SUMMARIZER",
       });
       return { message: "Summarized with Anthropic", data: DEFAULT_MESSAGE, chatId: chat };
     } else {
@@ -220,7 +231,8 @@ export class ToolsService {
           response: anthropicResult,
           memberId,
           chatId,
-          modelId: "genie - image",
+          modelId,
+          type: "SUMMARIZER",
         });
 
         return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
@@ -236,7 +248,8 @@ export class ToolsService {
             response: openAiResult,
             memberId,
             chatId,
-            modelId: "genie - image",
+            modelId,
+            type: "SUMMARIZER",
           });
 
           return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
@@ -247,62 +260,130 @@ export class ToolsService {
     }
   }
 
-  async saveMessageResponse(params: {
-    message: string;
-    response: string;
-    memberId: string;
-    chatId: string;
-    modelId: string;
-  }): Promise<string> {
-    const { message, response, memberId, chatId, modelId } = params;
+  // paragraph generator
 
-    if (chatId?.trim()) {
-      await this.prisma.workspace_conversation_table.createMany({
-        data: [
-          {
-            workspace_conversation_content: message,
+  async paragraphGenerator(dto: ParagraphGeneratorDto, memberId: string) {
+    const { summaryTone, summaryLength, inputText, chatId, modelId } = dto;
 
-            workspace_conversation_model_id: modelId,
-            workspace_coversation_chat_id: chatId,
-          },
-          {
-            workspace_conversation_content: response,
-            workspace_conversation_model_id: modelId,
-            workspace_coversation_chat_id: chatId,
-            workspace_conversation_is_agent: true,
-          },
-        ],
+    let chat = "";
+    const prompt = ParagraphGeneratorPrompt(
+      summaryTone,
+      inputText,
+      `${summaryLength === 25 ? "short" : summaryLength === 50 ? "medium" : "long"} paragraph`,
+    );
+
+    if (process.env.NODE_ENV === "local") {
+      await this.saveMessageResponse({
+        message: inputText,
+        response: DEFAULT_MESSAGE,
+        memberId,
+        chatId: chatId || "",
+        modelId: modelId,
+        type: "PARAGRAPH_GENERATOR",
       });
+      return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE, chatId: chat };
+    } else {
+      try {
+        const anthropicResult = await this.anthropicService.generateParagraph(inputText || "", prompt);
+        if (!anthropicResult) {
+          throw new Error("Anthropic returned null result");
+        }
 
-      return chatId;
+        chat = await this.saveMessageResponse({
+          message: inputText,
+          response: anthropicResult,
+          memberId,
+          chatId: chatId || "",
+          modelId: modelId,
+          type: "PARAGRAPH_GENERATOR",
+        });
+
+        return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
+      } catch (anthropicError) {
+        try {
+          const openAiResult = await this.openaiService.generateParagraph(inputText || "", prompt);
+          if (!openAiResult) {
+            throw new Error("OpenAI returned null result");
+          }
+
+          chat = await this.saveMessageResponse({
+            message: inputText,
+            response: openAiResult,
+            memberId,
+            chatId: chatId || "",
+            modelId,
+            type: "PARAGRAPH_GENERATOR",
+          });
+          return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
+        } catch (openAiError) {
+          throw new Error("Both LLMs failed to generate a summary.");
+        }
+      }
     }
-
-    const newChat = await this.prisma.workspace_chat_table.create({
-      data: {
-        workspace_chat_member_id: memberId,
-        workspace_chat_type: "SUMMARIZER",
-        workspace_chat_title: getChatTitle(message),
-        workspace_conversation: {
-          createMany: {
-            data: [
-              {
-                workspace_conversation_content: message,
-                workspace_conversation_model_id: modelId,
-              },
-              {
-                workspace_conversation_content: response,
-                workspace_conversation_model_id: modelId,
-                workspace_conversation_is_agent: true,
-              },
-            ],
-          },
-        },
-      },
-    });
-
-    return newChat.workspace_chat_id;
   }
 
+  async contentRewriter(dto: ParagraphGeneratorDto, memberId: string) {
+    const { summaryTone, summaryLength, inputText, chatId, modelId } = dto;
+
+    let chat = "";
+    const prompt = ContentRewriterPrompt(
+      summaryTone,
+      inputText,
+      `${summaryLength === 25 ? "short" : summaryLength === 50 ? "medium" : "long"} paragraph`,
+    );
+
+    if (process.env.NODE_ENV === "local") {
+      await this.saveMessageResponse({
+        message: inputText,
+        response: DEFAULT_MESSAGE,
+        memberId,
+        chatId: chatId || "",
+        modelId: modelId,
+        type: "CONTENT_REWRITER",
+      });
+      return { message: "Summarized with OpenAI", data: DEFAULT_MESSAGE, chatId: chat };
+    } else {
+      try {
+        const anthropicResult = await this.anthropicService.generateParagraph(inputText || "", prompt);
+        if (!anthropicResult) {
+          throw new Error("Anthropic returned null result");
+        }
+
+        chat = await this.saveMessageResponse({
+          message: inputText,
+          response: anthropicResult,
+          memberId,
+          chatId: chatId || "",
+          modelId: modelId,
+          type: "CONTENT_REWRITER",
+        });
+
+        return { message: "Summarized with Anthropic", data: anthropicResult, chatId: chat };
+      } catch (anthropicError) {
+        try {
+          const openAiResult = await this.openaiService.generateParagraph(inputText || "", prompt);
+          if (!openAiResult) {
+            throw new Error("OpenAI returned null result");
+          }
+
+          chat = await this.saveMessageResponse({
+            message: inputText,
+            response: openAiResult,
+            memberId,
+            chatId: chatId || "",
+            modelId,
+            type: "CONTENT_REWRITER",
+          });
+          return { message: "Summarized with OpenAI", data: openAiResult, chatId: chat };
+        } catch (openAiError) {
+          console.log(openAiError);
+          throw new Error("Both LLMs failed to generate a summary.");
+        }
+      }
+    }
+  }
+
+  // get tools
   async getTools(dto: GetToolsDto, currentWorkspace: string) {
     const { model, isPopular } = dto;
 
@@ -355,5 +436,62 @@ export class ToolsService {
       chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
     }
     return Buffer.concat(chunks);
+  }
+
+  private async saveMessageResponse(params: {
+    message: string;
+    response: string;
+    memberId: string;
+    chatId: string;
+    modelId: string;
+    type: string;
+  }): Promise<string> {
+    const { message, response, memberId, chatId, modelId, type } = params;
+
+    if (chatId?.trim()) {
+      await this.prisma.workspace_conversation_table.createMany({
+        data: [
+          {
+            workspace_conversation_content: message,
+
+            workspace_conversation_model_id: modelId,
+            workspace_coversation_chat_id: chatId,
+          },
+          {
+            workspace_conversation_content: response,
+            workspace_conversation_model_id: modelId,
+            workspace_coversation_chat_id: chatId,
+            workspace_conversation_is_agent: true,
+          },
+        ],
+      });
+
+      return chatId;
+    }
+
+    const newChat = await this.prisma.workspace_chat_table.create({
+      data: {
+        workspace_chat_member_id: memberId,
+        workspace_chat_type: type as ChatType,
+        workspace_chat_title: getChatTitle(message),
+        workspace_conversation: {
+          createMany: {
+            data: [
+              {
+                workspace_conversation_content: message,
+                workspace_conversation_model_id: modelId,
+              },
+              {
+                workspace_conversation_content: response,
+                workspace_conversation_model_id: modelId,
+                workspace_conversation_is_agent: true,
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    return newChat.workspace_chat_id;
   }
 }
