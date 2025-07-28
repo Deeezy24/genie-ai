@@ -123,15 +123,14 @@ const PricingSection = ({ isAuthenticated = false }: { isAuthenticated?: boolean
                       : "border-white/10 hover:border-white/20"
                   }`}
                 >
-                  <CardHeader className="text-center pt-8">
-                    <div className="flex items-center justify-center gap-3 mb-4">
+                  <CardHeader className="text-center">
+                    <div className="flex items-center justify-center">
                       <CardTitle className="text-2xl text-white">{plan.title}</CardTitle>
                     </div>
 
-                    <div className="text-5xl font-bold text-white mb-2">
-                      <span className="text-lg font-medium text-gray-400">/mo</span>
+                    <div className="text-5xl font-bold">
+                      <span className="text-lg font-medium text-gray-400">{plan.price}/mo</span>
                     </div>
-
                     <CardDescription className="text-gray-300 text-base">{plan.description}</CardDescription>
                   </CardHeader>
 

@@ -49,7 +49,7 @@ export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
 
 //genie text schema
 const SummaryTone = z.enum(["Simple", "Detailed", "Bullet Points"]);
-const SummaryLength = z.number().min(25).max(75);
+const SummaryLength = z.number().min(25).max(100);
 const SummaryType = z.enum(["text", "url", "file", "audio", "image", "video"]);
 
 export const genieSummarySchema = z
@@ -104,6 +104,7 @@ export const genieSummarySchema = z
         break;
     }
   });
+
 export type GenieTextTypes = z.infer<typeof genieSummarySchema>;
 
 export const checkOutSchema = z.object({
@@ -132,3 +133,14 @@ export const getMessagesChatSchema = z.object({
 });
 
 export type GetMessagesChatSchema = z.infer<typeof getMessagesChatSchema>;
+
+export const paragraphGeneratorSchema = z.object({
+  summaryTone: z.string(),
+  summaryLength: SummaryLength,
+  inputText: z.string().optional(),
+  workspaceId: z.string(),
+  chatId: z.string().optional(),
+  modelId: z.string().optional(),
+});
+
+export type ParagraphGeneratorTypes = z.infer<typeof paragraphGeneratorSchema>;

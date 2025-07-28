@@ -22,6 +22,21 @@ export class AnthropicService {
     return response.content[0]?.type ?? null;
   }
 
+  async generateParagraph(text: string, prompt: string) {
+    const response = await this.anthropic.messages.create({
+      model: "claude-3-5-sonnet-20240620",
+      max_tokens: 1024,
+      messages: [
+        {
+          role: "user",
+          content: `${prompt}\n\n${text}`,
+        },
+      ],
+    });
+
+    return response.content[0]?.type ?? null;
+  }
+
   async summarizeImageWithVision(base64Image: string, prompt: string) {
     const response = await this.anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",

@@ -4,7 +4,7 @@ import { Files } from "@/decorator/files/files.decorator";
 import { AiRateLimitGuard } from "@/guard/ai-rate-limit/ai-rate-limit.guard";
 import { MultipartInterceptor } from "@/interceptor/file/file.interceptor";
 import { RedisService } from "@/service/redis/redis.service";
-import { GetToolsDto, ToolsSummaryDto } from "./dto/tools.schema";
+import { ContentRewriterDto, GetToolsDto, ParagraphGeneratorDto, ToolsSummaryDto } from "./dto/tools.schema";
 import { ToolsService } from "./tools.service";
 
 @Controller("tools")
@@ -71,6 +71,28 @@ export class ToolsController {
         default:
           throw new Error("Unsupported summary type");
       }
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  @Post("/paragraph-generator")
+  @UseGuards(AiRateLimitGuard)
+  async paragraphGenerator(@Body() dto: ParagraphGeneratorDto, @Req() req: FastifyRequestWithUser) {
+    try {
+      const memberId = req.user.publicMetadata.memberId as string;
+      return this.toolsService.paragraphGenerator(dto, memberId);
+    } catch (error) {
+      throw new Error(error as string);
+    }
+  }
+
+  @Post("/content-rewriter")
+  @UseGuards(AiRateLimitGuard)
+  async contentRewriter(@Body() dto: ContentRewriterDto, @Req() req: FastifyRequestWithUser) {
+    try {
+      const memberId = req.user.publicMetadata.memberId as string;
+      return this.toolsService.contentRewriter(dto, memberId);
     } catch (error) {
       throw new Error(error as string);
     }
@@ -207,6 +229,7 @@ export class ToolsController {
       SummaryLength[SummarySize],
       memberId,
       dto.chatId,
+      dto.modelId || "",
     );
     await this.redisService.incrementWithExpiry(key, ttlSeconds);
     return result;

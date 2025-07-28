@@ -2,6 +2,9 @@
 enum ChatType {
   SUMMARIZER
   CHAT
+  CONTENT_REWRITER
+  PARAGRAPH_GENERATOR
+  HUMANIZER
   @@schema("workspace_schema")
 }
 

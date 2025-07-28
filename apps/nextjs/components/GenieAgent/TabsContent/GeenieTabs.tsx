@@ -118,8 +118,8 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
 
   const isInputTime = form.watch("inputTime");
   return (
-    <div className="flex gap-4 rounded-md p-4">
-      <Card className="w-3/5 border-none shadow-none">
+    <div className="flex flex-col md:flex-row gap-4 rounded-md p-4 ">
+      <Card className="w-full md:w-3/5 border-none shadow-none bg-zinc-900/60">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="hidden">
@@ -345,7 +345,7 @@ const GenieTabs = ({ workspace, type }: { workspace: string; type: GenieTypes })
         </Form>
       </Card>
 
-      <Card className="w-2/5 border-none shadow-none">
+      <Card className="w-full md:w-2/5 border-none shadow-none bg-zinc-900/60">
         <CardHeader>
           <CardTitle>Summary</CardTitle>
         </CardHeader>

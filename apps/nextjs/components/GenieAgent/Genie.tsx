@@ -45,7 +45,7 @@ const GenieAgent = ({ workspace }: { workspace: string }) => {
 
   return (
     <div className="min-h-screen p-8 space-y-8">
-      <h1 className="text-3xl font-bold mb-2">Genie AI</h1>
+      <h1 className="text-3xl font-bold mb-2">Genie</h1>
 
       <Separator className="my-6" />
 

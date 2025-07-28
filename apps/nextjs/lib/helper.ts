@@ -76,3 +76,12 @@ export const getPastDateInMinutes = (date: string) => {
   }
   return `${diffMinutes} mins ago`;
 };
+
+export const removeSpecialCharacters = (text: string) => {
+  return text
+    .replace(/[^a-zA-Z0-9\s]/g, " ") // Replace special characters with space
+    .split(" ") // Split by space
+    .filter((word) => word && word.length > 0) // Remove empty strings
+    .map((word) => word[0]?.toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+    .join(" "); // Join back with space
+};
